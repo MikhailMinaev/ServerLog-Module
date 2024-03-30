@@ -104,6 +104,10 @@ const serviceWarning = (serviceName, text) => {
     console.log(serverName('yellow') + terminalText(" " + serviceName + " ", 'white', 'yellow', false) + divider('yellow', '') + terminalText(text, 'yellow', '', false))
 }
 
+const serviceSuccess = (serviceName, text) => {
+    console.log(serverName('green') + terminalText(" " + serviceName + " ", 'white', 'green', false) + divider('green', '') + terminalText(text, 'white', '', false))
+}
+
 const error = (errorText) => {
     console.log(serverName('') + dividerBack('red', '') + terminalText("  Error ", 'white', 'red', false) + divider('red', '') + terminalText(errorText, 'red', '', false))
 }
@@ -116,6 +120,10 @@ const info = (infoText) => {
     console.log(serverName('') + dividerBack('purple', '') + terminalText("   Info  ", 'white', 'purple', false) + divider('purple', '') + terminalText(infoText, 'purple', '', false))
 }
 
+const success = (infoText) => {
+    console.log(serverName('') + dividerBack('green', '') + terminalText("   Info  ", 'white', 'green', false) + divider('green', '') + terminalText(infoText, 'white', '', false))
+}
+
 // Module init
 
 module.exports = {
@@ -125,9 +133,11 @@ module.exports = {
     serviceInfo,
     serviceError,
     serviceWarning,
+    serviceSuccess,
     error,
     warning,
     info,
+    success,
     appName: setAppName
 
 }
