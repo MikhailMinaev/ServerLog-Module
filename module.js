@@ -7,7 +7,7 @@ systemInformationServices = {
     system:             ' System  ',
     bios:               '  Bios   ',
     baseboard:          'Baseboard',
-    cpu:                'CPU      ',
+    cpu:                '  CPU    ',
     memory:             'Memory   ',
     graphics:           'Graphics ',
     osInfo:             'OS       ',
@@ -197,10 +197,10 @@ const systemTimeInformation = async () => {
 
     const formatedTime = unixTimeConverter(time.current)
 
-    serviceInfo(systemInformationServices.time,    `\x1b[1mUTC Time:      \x1b[0m${formatedTime.UTCFormatedTime}`)
-    serviceInfo(systemInformationServices.time,    `\x1b[1mLocal Time:    \x1b[0m${formatedTime.localFormatedTime}`)
-    serviceInfo(systemInformationServices.time,    `\x1b[1mTimezone:      \x1b[0m${time.timezone}`)
-    serviceInfo(systemInformationServices.time,    `\x1b[1mTimezone:      \x1b[0m${time.timezoneName}`)
+    serviceInfo(systemInformationServices.time,     `\x1b[1mUTC Time:               \x1b[0m${formatedTime.UTCFormatedTime}`)
+    serviceInfo(systemInformationServices.time,     `\x1b[1mLocal Time:             \x1b[0m${formatedTime.localFormatedTime}`)
+    serviceInfo(systemInformationServices.time,     `\x1b[1mTimezone:               \x1b[0m${time.timezone}`)
+    serviceInfo(systemInformationServices.time,     `\x1b[1mTimezone:               \x1b[0m${time.timezoneName}`)
 
 }
 
@@ -208,7 +208,7 @@ const systemDataInformation = async () => {
 
     const system = await systeminformation.system()
 
-    serviceInfo(systemInformationServices.system,  `\x1b[1mUUID:          \x1b[0m${system.uuid}`)
+    serviceInfo(systemInformationServices.system,   `\x1b[1mUUID:                   \x1b[0m${system.uuid}`)
 
 }
 
@@ -216,8 +216,28 @@ const systemBiosInformation = async () => {
 
     const bios = await systeminformation.bios()
 
-    serviceInfo(systemInformationServices.bios,    `\x1b[1mBIOS Vendor :  \x1b[0m${bios.vendor}`)
-    serviceInfo(systemInformationServices.bios,    `\x1b[1mBIOS Version:  \x1b[0m${bios.version}`)
+    serviceInfo(systemInformationServices.bios,     `\x1b[1mBIOS Vendor:            \x1b[0m${bios.vendor}`)
+    serviceInfo(systemInformationServices.bios,     `\x1b[1mBIOS Version:           \x1b[0m${bios.version}`)
+
+}
+
+const systemCPUInformation = async () => {
+
+    const cpu = await systeminformation.cpu()
+    const cpuFlags = await systeminformation.cpuFlags()
+
+    serviceInfo(systemInformationServices.cpu,      `\x1b[1mCPU Company:            \x1b[0m${cpu.manufacturer}`)
+    serviceInfo(systemInformationServices.cpu,      `\x1b[1mCPU:                    \x1b[0m${cpu.brand}`)
+    serviceInfo(systemInformationServices.cpu,      `\x1b[1mCPU Cores:              \x1b[0m${cpu.cores}`)
+    serviceInfo(systemInformationServices.cpu,      `\x1b[1mCPU Physical Cores:     \x1b[0m${cpu.physicalCores}`)
+    serviceInfo(systemInformationServices.cpu,      `\x1b[1mCPU Performance Cores:  \x1b[0m${cpu.performanceCores}`)
+    serviceInfo(systemInformationServices.cpu,      `\x1b[1mCPU Efficiency Cores:   \x1b[0m${cpu.efficiencyCores}`)
+    serviceInfo(systemInformationServices.cpu,      `\x1b[1mProcessors:             \x1b[0m${cpu.processors}`)
+    serviceInfo(systemInformationServices.cpu,      `\x1b[1mVirtualization:         \x1b[0m${cpu.virtualization ? 'Yes' : 'No'}`)
+
+    if (cpuFlags.length > 0) {
+    serviceInfo(systemInformationServices.cpu,      `\x1b[1mFlags:                  \x1b[0m${cpuFlags}`)    
+    }
 
 }
 
@@ -225,6 +245,7 @@ const systemInformation = async () => {
     systemTimeInformation()
     systemDataInformation()
     systemBiosInformation()
+    systemCPUInformation()
 }
 
 // Module init
