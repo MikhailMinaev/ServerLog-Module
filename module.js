@@ -92,8 +92,12 @@ const heading = (text) => {
     
 }
 
-const serviceInfo = (serviceName, text) => {
+const serviceMessage = (serviceName, text) => {
     console.log(serverName('cyan') + terminalText(" " + serviceName + " ", 'white', 'cyan', false) + divider('cyan', '') + terminalText(text, 'white', '', false))
+}
+
+const serviceInfo = (serviceName, text) => {
+    console.log(serverName('purple') + terminalText(" " + serviceName + " ", 'white', 'purple', false) + divider('purple', '') + terminalText(text, 'white', '', false))
 }
 
 const serviceError = (serviceName, text) => {
