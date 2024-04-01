@@ -10,7 +10,7 @@ systemInformationServices = {
     cpu:                '  CPU    ',
     memory:             ' Memory  ',
     graphics:           'Graphics ',
-    osInfo:             'OS       ',
+    osInfo:             '   OS    ',
     versions:           'Software ',
     diskLayout:         'Disks    ',
     networkInterfaces:  'Network  ',
@@ -267,12 +267,29 @@ const systemMemoryInformation = async (measurement) => {
 
 }
 
+const systemOSInformation = async () => {
+
+    const osInfo = await systeminformation.osInfo()
+
+    serviceInfo(systemInformationServices.osInfo,   `\x1b[1mPlatform:               \x1b[0m${osInfo.platform}`)
+    serviceInfo(systemInformationServices.osInfo,   `\x1b[1mDistro:                 \x1b[0m${osInfo.distro}`)
+    serviceInfo(systemInformationServices.osInfo,   `\x1b[1mVersion:                \x1b[0m${osInfo.release}`)
+    serviceInfo(systemInformationServices.osInfo,   `\x1b[1mCodename:               \x1b[0m${osInfo.codename}`)
+    serviceInfo(systemInformationServices.osInfo,   `\x1b[1mKernel:                 \x1b[0m${osInfo.kernel}`)
+    serviceInfo(systemInformationServices.osInfo,   `\x1b[1mArch:                   \x1b[0m${osInfo.arch}`)
+    serviceInfo(systemInformationServices.osInfo,   `\x1b[1mHostname:               \x1b[0m${osInfo.hostname}`)
+    serviceInfo(systemInformationServices.osInfo,   `\x1b[1mSerial:                 \x1b[0m${osInfo.serial}`)
+    serviceInfo(systemInformationServices.osInfo,   `\x1b[1mBuild:                  \x1b[0m${osInfo.build}`)
+
+}
+
 const systemInformation = async () => {
     systemTimeInformation()
     systemDataInformation()
     systemBiosInformation()
     systemCPUInformation()
     systemMemoryInformation()
+    systemOSInformation()
 }
 
 // Module init
