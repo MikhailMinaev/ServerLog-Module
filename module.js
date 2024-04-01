@@ -202,6 +202,7 @@ const systemTimeInformation = async () => {
     serviceInfo(systemInformationServices.time,     `\x1b[1mTimezone:               \x1b[0m${time.timezone}`)
     serviceInfo(systemInformationServices.time,     `\x1b[1mTimezone:               \x1b[0m${time.timezoneName}`)
 
+    return
 }
 
 const systemDataInformation = async () => {
@@ -210,6 +211,7 @@ const systemDataInformation = async () => {
 
     serviceInfo(systemInformationServices.system,   `\x1b[1mUUID:                   \x1b[0m${system.uuid}`)
 
+    return
 }
 
 const systemBiosInformation = async () => {
@@ -219,6 +221,7 @@ const systemBiosInformation = async () => {
     serviceInfo(systemInformationServices.bios,     `\x1b[1mBIOS Vendor:            \x1b[0m${bios.vendor}`)
     serviceInfo(systemInformationServices.bios,     `\x1b[1mBIOS Version:           \x1b[0m${bios.version}`)
 
+    return
 }
 
 const systemCPUInformation = async () => {
@@ -239,6 +242,7 @@ const systemCPUInformation = async () => {
     serviceInfo(systemInformationServices.cpu,      `\x1b[1mFlags:                  \x1b[0m${cpuFlags}`)    
     }
 
+    return
 }
 
 const systemMemoryInformation = async (measurement) => {
@@ -265,6 +269,7 @@ const systemMemoryInformation = async (measurement) => {
     serviceInfo(systemInformationServices.memory,   `\x1b[1mActive:                 \x1b[0m${Math.round(memory.active / measurementDivider)} ${measurementSuffix}`)
     serviceInfo(systemInformationServices.memory,   `\x1b[1mAvailable:              \x1b[0m${Math.round(memory.available / measurementDivider)} ${measurementSuffix}`)
 
+    return
 }
 
 const systemOSInformation = async () => {
@@ -281,6 +286,7 @@ const systemOSInformation = async () => {
     serviceInfo(systemInformationServices.osInfo,   `\x1b[1mSerial:                 \x1b[0m${osInfo.serial}`)
     serviceInfo(systemInformationServices.osInfo,   `\x1b[1mBuild:                  \x1b[0m${osInfo.build}`)
 
+    return
 }
 
 const systemSoftwareInformation = async () => {
@@ -301,17 +307,20 @@ const systemSoftwareInformation = async () => {
     serviceInfo(systemInformationServices.software, `\x1b[1mPython:                 \x1b[0m${software.python3}`)
     serviceInfo(systemInformationServices.software, `\x1b[1mPIP:                    \x1b[0m${software.pip3}`)
     serviceInfo(systemInformationServices.software, `\x1b[1mZSH:                    \x1b[0m${software.zsh}`)
-
+    
+    return
 }
 
 const systemInformation = async () => {
-    systemTimeInformation()
-    systemDataInformation()
-    systemBiosInformation()
-    systemCPUInformation()
-    systemMemoryInformation()
-    systemOSInformation()
-    systemSoftwareInformation()
+    await systemTimeInformation()
+    await systemDataInformation()
+    await systemBiosInformation()
+    await systemCPUInformation()
+    await systemMemoryInformation()
+    await systemOSInformation()
+    await systemSoftwareInformation()
+
+    return
 }
 
 // Module init
