@@ -334,7 +334,7 @@ module.exports = {
     success,
     
     systemInformation,
-    ssystemTimeInformation,
+    systemTimeInformation,
     systemDataInformation,
     systemBiosInformation,
     systemCPUInformation,
