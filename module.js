@@ -8,7 +8,7 @@ systemInformationServices = {
     bios:               '  Bios   ',
     baseboard:          'Baseboard',
     cpu:                '  CPU    ',
-    memory:             'Memory   ',
+    memory:             ' Memory  ',
     graphics:           'Graphics ',
     osInfo:             'OS       ',
     versions:           'Software ',
@@ -241,11 +241,38 @@ const systemCPUInformation = async () => {
 
 }
 
+const systemMemoryInformation = async (measurement) => {
+
+    const memory = await systeminformation.mem()
+
+    let measurementDivider
+    let measurementSuffix
+
+    if (measurement == undefined) {
+        measurementDivider = 1024 * 1024 * 1024
+        measurementSuffix = 'GiB'
+    } else if (measurement == 'GB' || measurement == 'GiB') {
+        measurementDivider = 1024 * 1024 * 1024
+        measurementSuffix = 'GiB'
+    } else if (measurement == 'MB' || measurement == 'MiB') {
+        measurementDivider = 1024 * 1024
+        measurementSuffix = 'MiB'
+    }
+
+    serviceInfo(systemInformationServices.memory,   `\x1b[1mTotal:                  \x1b[0m${Math.round(memory.total / measurementDivider)} ${measurementSuffix}`)
+    serviceInfo(systemInformationServices.memory,   `\x1b[1mFree:                   \x1b[0m${Math.round(memory.free / measurementDivider)} ${measurementSuffix}`)
+    serviceInfo(systemInformationServices.memory,   `\x1b[1mUsed:                   \x1b[0m${Math.round(memory.used / measurementDivider)} ${measurementSuffix}`)
+    serviceInfo(systemInformationServices.memory,   `\x1b[1mActive:                 \x1b[0m${Math.round(memory.active / measurementDivider)} ${measurementSuffix}`)
+    serviceInfo(systemInformationServices.memory,   `\x1b[1mAvailable:              \x1b[0m${Math.round(memory.available / measurementDivider)} ${measurementSuffix}`)
+
+}
+
 const systemInformation = async () => {
     systemTimeInformation()
     systemDataInformation()
     systemBiosInformation()
     systemCPUInformation()
+    systemMemoryInformation()
 }
 
 // Module init
