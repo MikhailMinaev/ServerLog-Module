@@ -11,7 +11,7 @@ systemInformationServices = {
     memory:             ' Memory  ',
     graphics:           'Graphics ',
     osInfo:             '   OS    ',
-    versions:           'Software ',
+    software:           'Software ',
     diskLayout:         'Disks    ',
     networkInterfaces:  'Network  ',
 }
@@ -283,6 +283,27 @@ const systemOSInformation = async () => {
 
 }
 
+const systemSoftwareInformation = async () => {
+
+    const software = await systeminformation.versions()
+
+    serviceInfo(systemInformationServices.software, `\x1b[1mOpenSSL:                \x1b[0m${software.openssl}`)
+    serviceInfo(systemInformationServices.software, `\x1b[1mSystem OpenSSL:         \x1b[0m${software.systemOpenssl}`)
+    serviceInfo(systemInformationServices.software, `\x1b[1mNode:                   \x1b[0m${software.node}`)
+    serviceInfo(systemInformationServices.software, `\x1b[1mV8:                     \x1b[0m${software.v8}`)
+    serviceInfo(systemInformationServices.software, `\x1b[1mNPM:                    \x1b[0m${software.npm}`)
+    serviceInfo(systemInformationServices.software, `\x1b[1mGit:                    \x1b[0m${software.git}`)
+    serviceInfo(systemInformationServices.software, `\x1b[1mMySQL:                  \x1b[0m${software.mysql}`)
+    serviceInfo(systemInformationServices.software, `\x1b[1mRedis:                  \x1b[0m${software.redis}`)
+    serviceInfo(systemInformationServices.software, `\x1b[1mMongoDB:                \x1b[0m${software.mongodb}`)
+    serviceInfo(systemInformationServices.software, `\x1b[1mNginx:                  \x1b[0m${software.nginx}`)
+    serviceInfo(systemInformationServices.software, `\x1b[1mDocker:                 \x1b[0m${software.docker}`)
+    serviceInfo(systemInformationServices.software, `\x1b[1mPython:                 \x1b[0m${software.python3}`)
+    serviceInfo(systemInformationServices.software, `\x1b[1mPIP:                    \x1b[0m${software.pip3}`)
+    serviceInfo(systemInformationServices.software, `\x1b[1mZSH:                    \x1b[0m${software.zsh}`)
+
+}
+
 const systemInformation = async () => {
     systemTimeInformation()
     systemDataInformation()
@@ -290,6 +311,7 @@ const systemInformation = async () => {
     systemCPUInformation()
     systemMemoryInformation()
     systemOSInformation()
+    systemSoftwareInformation()
 }
 
 // Module init
