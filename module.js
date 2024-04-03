@@ -172,7 +172,7 @@ const serviceSuccess = (serviceName, text) => {
 }
 
 const message = (infoText) => {
-    console.log(serverName('') + dividerBack('blue', '') + terminalText("   Info  ", 'white', 'blue', false) + divider('purple', '') + terminalText(infoText, 'blue', '', false))
+    console.log(serverName('') + terminalText(infoText, 'white', '', false))
 }
 
 const error = (errorText) => {

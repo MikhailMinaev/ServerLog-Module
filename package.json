@@ -1,6 +1,6 @@
 {
   "name": "@mikhailminaev/serverlog",
-  "version": "1.0.3",
+  "version": "1.0.4",
   "description": "Company Server Log module",
   "main": "module.js",
   "scripts": {
