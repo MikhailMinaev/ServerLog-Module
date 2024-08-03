@@ -1,4 +1,6 @@
 const systeminformation = require('systeminformation')
+const fs = require('fs');
+const path = require('path');
 
 // Helpers
 
@@ -59,13 +61,29 @@ function unixTimeConverter(UNIX_timestamp){
 
 //Functions
 
-let appName;
+let appName, logPath, logName;
+let logToFile = false;
 
 const setAppName = (name) => {
-
     appName = name;
-
 }
+
+const setLogPath = (value) => {
+    logPath = value;
+}
+
+const setLogName = (value) => {
+    logName = value;
+}
+
+const setLogToFile = (value) => {
+    logToFile = value
+}
+
+const getCurrentTimestamp = () => {
+    const now = new Date();
+    return now.toISOString();
+};
 
 const serverName = (nextColor) => {
 
@@ -151,44 +169,124 @@ const heading = (text) => {
     
 }
 
-const serviceMessage = (serviceName, text) => {
+const serviceMessage = (serviceName, text, logThisToFile = false) => {
+
     console.log(serverName('cyan') + terminalText(" " + serviceName + " ", 'white', 'cyan', false) + divider('cyan', '') + terminalText(text, 'white', '', false))
+
+    if (logToFile || logThisToFile == true) {
+        fs.appendFile(path.join(logPath, `${logName}.log`), `${getCurrentTimestamp()} [Service Message] | ${appName} | ${serviceName} | ${text} \n`, (err) => {
+            if (err) { console.error('Error when adding new data to log:', err); }
+        });
+    }
+
 }
 
-const serviceInfo = (serviceName, text) => {
+const serviceInfo = (serviceName, text, logThisToFile = false) => {
+
     console.log(serverName('purple') + terminalText(" " + serviceName + " ", 'white', 'purple', false) + divider('purple', '') + terminalText(text, 'white', '', false))
+
+    if (logToFile || logThisToFile == true) {
+        fs.appendFile(path.join(logPath, `${logName}.log`), `${getCurrentTimestamp()} [Service Info]    | ${appName} | ${serviceName} | ${text} \n`, (err) => {
+            if (err) { console.error('Error when adding new data to log:', err); }
+        });
+    }
+
 }
 
-const serviceError = (serviceName, text) => {
+const serviceError = (serviceName, text, logThisToFile = false) => {
+
     console.log(serverName('red') + terminalText(" " + serviceName + " ", 'white', 'red', false) + divider('red', '') + terminalText(text, 'red', '', false))
+
+    if (logToFile || logThisToFile == true) {
+        fs.appendFile(path.join(logPath, `${logName}.log`), `${getCurrentTimestamp()} [Service Error]   | ${appName} | ${serviceName} | ${text} \n`, (err) => {
+            if (err) { console.error('Error when adding new data to log:', err); }
+        });
+    }
+
 }
 
-const serviceWarning = (serviceName, text) => {
+const serviceWarning = (serviceName, text, logThisToFile = false) => {
+    
     console.log(serverName('yellow') + terminalText(" " + serviceName + " ", 'white', 'yellow', false) + divider('yellow', '') + terminalText(text, 'yellow', '', false))
+
+    if (logToFile || logThisToFile == true) {
+        fs.appendFile(path.join(logPath, `${logName}.log`), `${getCurrentTimestamp()} [Service Warning] | ${appName} | ${serviceName} | ${text} \n`, (err) => {
+            if (err) { console.error('Error when adding new data to log:', err); }
+        });
+    }
+
 }
 
-const serviceSuccess = (serviceName, text) => {
+const serviceSuccess = (serviceName, text, logThisToFile = false) => {
+    
     console.log(serverName('green') + terminalText(" " + serviceName + " ", 'white', 'green', false) + divider('green', '') + terminalText(text, 'white', '', false))
+
+    if (logToFile || logThisToFile == true) {
+        fs.appendFile(path.join(logPath, `${logName}.log`), `${getCurrentTimestamp()} [Service Success] | ${appName} | ${serviceName} | ${text} \n`, (err) => {
+            if (err) { console.error('Error when adding new data to log:', err); }
+        });
+    }
+
 }
 
-const message = (infoText) => {
+const message = (infoText, logThisToFile = false) => {
+    
     console.log(serverName('') + terminalText(infoText, 'white', '', false))
+
+    if (logToFile || logThisToFile == true) {
+        fs.appendFile(path.join(logPath, `${logName}.log`), `${getCurrentTimestamp()} [Message]         | ${appName} | ${infoText} \n`, (err) => {
+            if (err) { console.error('Error when adding new data to log:', err); }
+        });
+    }
+
 }
 
-const error = (errorText) => {
+const error = (errorText, logThisToFile = false) => {
+    
     console.log(serverName('') + dividerBack('red', '') + terminalText("  Error ", 'white', 'red', false) + divider('red', '') + terminalText(errorText, 'red', '', false))
+
+    if (logToFile || logThisToFile == true) {
+        fs.appendFile(path.join(logPath, `${logName}.log`), `${getCurrentTimestamp()} [Error]           | ${appName} | ${errorText} \n`, (err) => {
+            if (err) { console.error('Error when adding new data to log:', err); }
+        });
+    }
+
 }
 
-const warning = (warningText) => {
+const warning = (warningText, logThisToFile = false) => {
+    
     console.log(serverName('') + dividerBack('yellow', '') + terminalText(" Warning", 'white', 'yellow', false) + divider('yellow', '') + terminalText(warningText, 'yellow', '', false))
+
+    if (logToFile || logThisToFile == true) {
+        fs.appendFile(path.join(logPath, `${logName}.log`), `${getCurrentTimestamp()} [Warning]         | ${appName} | ${warningText} \n`, (err) => {
+            if (err) { console.error('Error when adding new data to log:', err); }
+        });
+    }
+
 }
 
-const info = (infoText) => {
+const info = (infoText, logThisToFile = false) => {
+
     console.log(serverName('') + dividerBack('purple', '') + terminalText("   Info  ", 'white', 'purple', false) + divider('purple', '') + terminalText(infoText, 'purple', '', false))
+
+    if (logToFile || logThisToFile == true) {
+        fs.appendFile(path.join(logPath, `${logName}.log`), `${getCurrentTimestamp()} [Info]            | ${appName} | ${infoText} \n`, (err) => {
+            if (err) { console.error('Error when adding new data to log:', err); }
+        });
+    }
+
 }
 
-const success = (infoText) => {
+const success = (infoText, logThisToFile = false) => {
+    
     console.log(serverName('') + dividerBack('green', '') + terminalText("   Info  ", 'white', 'green', false) + divider('green', '') + terminalText(infoText, 'white', '', false))
+
+    if (logToFile || logThisToFile == true) {
+        fs.appendFile(path.join(logPath, `${logName}.log`), `${getCurrentTimestamp()} [Success]         | ${appName} | ${infoText} \n`, (err) => {
+            if (err) { console.error('Error when adding new data to log:', err); }
+        });
+    }
+
 }
 
 const systemTimeInformation = async () => {
@@ -328,6 +426,11 @@ const systemInformation = async () => {
 module.exports = {
 
     appName: setAppName,
+    setAppName,
+
+    setLogName,
+    setLogPath,
+    setLogToFile,
 
     log,
     heading,
