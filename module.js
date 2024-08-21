@@ -134,12 +134,6 @@ const dividerBack = (textColor, backgroundColor) => {
 
 }
 
-const log = (text) => {
-
-    console.log(serverName('clean') + text)
-
-}
-
 const heading = (text) => {
 
     console.log();
@@ -455,7 +449,7 @@ class Logger {
     }
 
     log(text) {
-        console.log(this.serverName('clean') + text);
+        console.log(serverName('clean') + text)
     }
 
     heading(text) {
@@ -483,7 +477,6 @@ class ServiceLogger {
 
 module.exports = {
 
-    log,
     heading,
     serviceMessage,
     serviceInfo,
