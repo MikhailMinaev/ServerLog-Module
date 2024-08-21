@@ -477,8 +477,8 @@ class Log {
     #consoleLogLevel;
     #serverLogLevel;
     #logToFile
-    #serviceName;
-    
+    #serviceName = undefined;
+
     constructor(text, formatedText) {
         this.#text = text;
         this.#formatedText = formatedText;
