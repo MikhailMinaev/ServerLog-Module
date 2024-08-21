@@ -431,26 +431,26 @@ class Logger {
     }
 
     setLogFilePath(path) {
-        logPath = path
+        logPath = path;
     }
 
     setLogFileName(name) {
-        logName = name
+        logName = name;
     }
 
     log(text) {
-        const formatedText = serverName('clean') + text
-        return new Log(text, formatedText)
+        const formatedText = serverName('clean') + text;
+        return new Log(text, formatedText);
     }
 
     heading(text) {
-        const formatedText = '\n' + serverName('blue') + terminalText(text, 'white', 'blue', false) + '\n'
-        return new Log(text, formatedText)
+        const formatedText = '\n' + serverName('blue') + terminalText(text, 'white', 'blue', false) + '\n';
+        return new Log(text, formatedText);
     }
 
     error(text) {
         const formatedText = serverName('') + dividerBack('red', '') + terminalText(" Error", 'white', 'red', false) + divider('red', '') + terminalText(text, 'red', '', false);
-        return new Log(text, formatedText)
+        return new Log(text, formatedText);
     }
 }
 
@@ -460,8 +460,8 @@ class ServiceLogger {
     }
 
     log(text) {
-        const formatedText = serverName('') + terminalText(this.serviceName, 'white', '', false) + divider('white', '') + terminalText(text, 'white', '', false)
-        return new Log(text, formatedText).setServiceName(this.serviceName)
+        const formatedText = serverName('') + terminalText(this.serviceName, 'white', '', false) + divider('white', '') + terminalText(text, 'white', '', false);
+        return new Log(text, formatedText).setServiceName(this.serviceName);
     }
 
     error(text) {
