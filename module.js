@@ -193,8 +193,6 @@ const serviceSuccess = (serviceName, text, logThisToFile = false) => {
 }
 
 const message = (infoText, logThisToFile = false) => {
-    
-    console.log(serverName('') + terminalText(infoText, 'white', '', false))
 
     if (logToFile || logThisToFile == true) {
         fs.appendFile(path.join(logPath, `${logName}.log`), `${getCurrentTimestamp()} [Message]         | ${appName} | ${infoText} \n`, (err) => {
@@ -450,6 +448,11 @@ class Logger {
 
     error(text) {
         const formatedText = serverName('') + dividerBack('red', '') + terminalText(" Error", 'white', 'red', false) + divider('red', '') + terminalText(text, 'red', '', false);
+        return new Log(text, formatedText);
+    }
+
+    message(text) {
+        const formatedText = serverName('') + terminalText(text, 'white', '', false);
         return new Log(text, formatedText);
     }
 }
