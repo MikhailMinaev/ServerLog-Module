@@ -215,8 +215,6 @@ const error = (errorText, logThisToFile = false) => {
 }
 
 const warning = (warningText, logThisToFile = false) => {
-    
-    console.log(serverName('') + dividerBack('yellow', '') + terminalText(" Warning", 'white', 'yellow', false) + divider('yellow', '') + terminalText(warningText, 'yellow', '', false))
 
     if (logToFile || logThisToFile == true) {
         fs.appendFile(path.join(logPath, `${logName}.log`), `${getCurrentTimestamp()} [Warning]         | ${appName} | ${warningText} \n`, (err) => {
@@ -448,6 +446,11 @@ class Logger {
 
     error(text) {
         const formatedText = serverName('') + dividerBack('red', '') + terminalText(" Error", 'white', 'red', false) + divider('red', '') + terminalText(text, 'red', '', false);
+        return new Log(text, formatedText);
+    }
+
+    warning(text) {
+        const formatedText = serverName('') + dividerBack('yellow', '') + terminalText(" Warning", 'white', 'yellow', false) + divider('yellow', '') + terminalText(text, 'yellow', '', false);
         return new Log(text, formatedText);
     }
 
