@@ -134,14 +134,6 @@ const dividerBack = (textColor, backgroundColor) => {
 
 }
 
-const heading = (text) => {
-
-    console.log();
-    console.log(serverName('blue') + terminalText(" " + text, 'white', 'blue', false))
-    console.log();
-    
-}
-
 const serviceMessage = (serviceName, text, logThisToFile = false) => {
 
     console.log(serverName('cyan') + terminalText(" " + serviceName + " ", 'white', 'cyan', false) + divider('cyan', '') + terminalText(text, 'white', '', false))
@@ -481,7 +473,6 @@ class ServiceLogger {
 
 module.exports = {
 
-    heading,
     serviceMessage,
     serviceInfo,
     serviceWarning,
