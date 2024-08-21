@@ -461,11 +461,31 @@ class ServiceLogger {
     }
 
     log(text) {
-        console.log(serverName('') + terminalText(this.serviceName, 'white', '', false) + divider('white', '') + terminalText(text, 'white', '', false))
+        const formatedText = serverName('') + terminalText(this.serviceName, 'white', '', false) + divider('white', '') + terminalText(text, 'white', '', false)
+        return new Log(text, formatedText).setServiceName(this.serviceName)
     }
 
     error() {
         console.log('ERRR')
+    }
+}
+
+class Log {
+    constructor(text, formatedText) {
+        this.text = text;
+        this.text = formatedText;
+        this.consoleLogLevel = 0;
+        this.serverLogLevel = 0;
+        this.logToFile = undefined;
+    }
+
+    setServiceName(serviceName) {
+        this.serviceName = serviceName;
+        return this;
+    }
+
+    run() {
+        console.log(this.text)
     }
 }
 
