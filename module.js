@@ -169,8 +169,6 @@ const serviceError = (serviceName, text, logThisToFile = false) => {
 }
 
 const serviceWarning = (serviceName, text, logThisToFile = false) => {
-    
-    console.log(serverName('yellow') + terminalText(" " + serviceName + " ", 'white', 'yellow', false) + divider('yellow', '') + terminalText(text, 'yellow', '', false))
 
     if (logToFile || logThisToFile == true) {
         fs.appendFile(path.join(logPath, `${logName}.log`), `${getCurrentTimestamp()} [Service Warning] | ${appName} | ${serviceName} | ${text} \n`, (err) => {
@@ -478,6 +476,11 @@ class ServiceLogger {
 
     error(text) {
         const formatedText = serverName('red') + terminalText(this.serviceName, 'white', 'red', false) + divider('red', '') + terminalText(text, 'red', '', false);
+        return new Log(text, formatedText).setServiceName(this.serviceName);
+    }
+
+    warning(text) {
+        const formatedText = serverName('yellow') + terminalText(this.serviceName, 'white', 'yellow', false) + divider('yellow', '') + terminalText(text, 'yellow', '', false);
         return new Log(text, formatedText).setServiceName(this.serviceName);
     }
 }
