@@ -441,7 +441,8 @@ class Logger {
     }
 
     log(text) {
-        console.log(serverName('clean') + text)
+        const formatedText = serverName('clean') + text
+        return new Log(text, formatedText)
     }
 
     heading(text) {
