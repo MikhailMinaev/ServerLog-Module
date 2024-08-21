@@ -518,7 +518,6 @@ module.exports = {
     serviceInfo,
     serviceWarning,
     serviceSuccess,
-    success,
     
     systemInformation,
     systemTimeInformation,
