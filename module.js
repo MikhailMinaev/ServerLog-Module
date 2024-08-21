@@ -505,12 +505,10 @@ module.exports = {
     serviceMessage,
     serviceInfo,
     serviceWarning,
-    serviceError,
     serviceSuccess,
     message,
     info,
     warning,
-    error,
     success,
     
     systemInformation,
