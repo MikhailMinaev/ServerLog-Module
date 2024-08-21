@@ -208,7 +208,7 @@ const message = (infoText, logThisToFile = false) => {
 
 const error = (errorText, logThisToFile = false) => {
     
-    console.log(serverName('') + dividerBack('red', '') + terminalText("  Error ", 'white', 'red', false) + divider('red', '') + terminalText(errorText, 'red', '', false))
+    console.log()
 
     if (logToFile || logThisToFile == true) {
         fs.appendFile(path.join(logPath, `${logName}.log`), `${getCurrentTimestamp()} [Error]           | ${appName} | ${errorText} \n`, (err) => {
@@ -450,8 +450,9 @@ class Logger {
         return new Log(text, formatedText)
     }
 
-    error() {
-        console.log('ERRRRRRROR')
+    error(text) {
+        const formatedText = serverName('') + dividerBack('red', '') + terminalText("  Error ", 'white', 'red', false) + divider('red', '') + terminalText(text, 'red', '', false);
+        return new Log(text, formatedText)
     }
 }
 
