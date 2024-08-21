@@ -443,7 +443,7 @@ class Logger {
     }
 
     error(text) {
-        const formatedText = serverName('') + dividerBack('red', '') + terminalText(" Error", 'white', 'red', false) + divider('red', '') + terminalText(text, 'red', '', false);
+        const formatedText = serverName('') + dividerBack('red', '') + terminalText("  Error ", 'white', 'red', false) + divider('red', '') + terminalText(text, 'red', '', false);
         return new Log(text, formatedText);
     }
 
@@ -453,7 +453,7 @@ class Logger {
     }
 
     info(text) {
-        const formatedText = serverName('') + dividerBack('purple', '') + terminalText(" Info", 'white', 'purple', false) + divider('purple', '') + terminalText(text, 'purple', '', false);
+        const formatedText = serverName('') + dividerBack('purple', '') + terminalText("  Info  ", 'white', 'purple', false) + divider('purple', '') + terminalText(text, 'purple', '', false);
         return new Log(text, formatedText);
     }
 
