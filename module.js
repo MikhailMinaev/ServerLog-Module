@@ -226,8 +226,6 @@ const warning = (warningText, logThisToFile = false) => {
 
 const info = (infoText, logThisToFile = false) => {
 
-    console.log(serverName('') + dividerBack('purple', '') + terminalText("   Info  ", 'white', 'purple', false) + divider('purple', '') + terminalText(infoText, 'purple', '', false))
-
     if (logToFile || logThisToFile == true) {
         fs.appendFile(path.join(logPath, `${logName}.log`), `${getCurrentTimestamp()} [Info]            | ${appName} | ${infoText} \n`, (err) => {
             if (err) { console.error('Error when adding new data to log:', err); }
@@ -451,6 +449,11 @@ class Logger {
 
     warning(text) {
         const formatedText = serverName('') + dividerBack('yellow', '') + terminalText(" Warning", 'white', 'yellow', false) + divider('yellow', '') + terminalText(text, 'yellow', '', false);
+        return new Log(text, formatedText);
+    }
+
+    info(text) {
+        const formatedText = serverName('') + dividerBack('purple', '') + terminalText(" Info", 'white', 'purple', false) + divider('purple', '') + terminalText(text, 'purple', '', false);
         return new Log(text, formatedText);
     }
 
