@@ -451,7 +451,7 @@ class Logger {
     }
 
     error(text) {
-        const formatedText = serverName('') + dividerBack('red', '') + terminalText("  Error ", 'white', 'red', false) + divider('red', '') + terminalText(text, 'red', '', false);
+        const formatedText = serverName('') + dividerBack('red', '') + terminalText(" Error", 'white', 'red', false) + divider('red', '') + terminalText(text, 'red', '', false);
         return new Log(text, formatedText)
     }
 }
