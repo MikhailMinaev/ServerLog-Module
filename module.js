@@ -471,21 +471,30 @@ class ServiceLogger {
 }
 
 class Log {
+
+    #text;
+    #formatedText;
+    #consoleLogLevel;
+    #serverLogLevel;
+    #logToFile
+    #serviceName;
+    
     constructor(text, formatedText) {
-        this.text = text;
-        this.text = formatedText;
-        this.consoleLogLevel = 0;
-        this.serverLogLevel = 0;
-        this.logToFile = undefined;
+        this.#text = text;
+        this.#formatedText = formatedText;
+        this.#consoleLogLevel = 0;
+        this.#serverLogLevel = 0;
+        this.#logToFile = undefined;
     }
 
+    /** @private */
     setServiceName(serviceName) {
-        this.serviceName = serviceName;
+        this.#serviceName = serviceName;
         return this;
     }
 
-    run() {
-        console.log(this.text)
+    process() {
+        console.log(this.#formatedText)
     }
 }
 
