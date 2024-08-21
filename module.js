@@ -446,9 +446,8 @@ class Logger {
     }
 
     heading(text) {
-        console.log();
-        console.log(serverName('blue') + terminalText(text, 'white', 'blue', false));
-        console.log();
+        const formatedText = '\n' + serverName('blue') + terminalText(text, 'white', 'blue', false) + '\n'
+        return new Log(text, formatedText)
     }
 
     error() {
