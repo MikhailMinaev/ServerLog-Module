@@ -421,6 +421,83 @@ const systemInformation = async () => {
     return
 }
 
+// Classes refactor
+
+const getLogLevel = (levelName) => {
+    switch (levelName.toLowerCase()) {
+        case 'fatal':
+            return 1;
+        case 'error':
+            return 2;
+        case 'warning':
+            return 3;
+        case 'info':
+            return 4;
+        case 'debug':
+            return 5;
+        case 'trace':
+            return 6;
+        case 'all':
+            return 7;
+    }
+}
+
+let consoleLogLevel = 4;
+let serverLogLevel = 4;
+
+class Logger {
+    
+    constructor() {}
+
+    setAppName(name) {
+        appName = name;
+    }
+
+    setConsoleLogLevel(levelName) {
+        consoleLogLevel = getLogLevel(levelName);
+    }
+
+    setServerLogLevel(levelName) {
+        serverLogLevel = getLogLevel(levelName);
+    }
+
+    setLogToFile(value) {
+        logToFile = value;
+    }
+
+    setLogFilePath(path) {
+        logPath = path
+    }
+
+    setLogFileName(name) {
+        logName = name
+    }
+
+    log(text) {
+        console.log(this.serverName('clean') + text);
+    }
+
+    heading(text) {
+        console.log();
+        console.log(this.serverName('blue') + this.terminalText(" " + text, 'white', 'blue', false));
+        console.log();
+    }
+
+    error() {
+        console.log('ERRRRRRROR')
+    }
+}
+
+class ServiceLogger {
+    constructor(serviceName) {
+        this.serviceName = serviceName;
+    }
+
+    error() {
+        console.log('ERRR')
+    }
+}
+
 // Module init
 
 module.exports = {
@@ -452,6 +529,9 @@ module.exports = {
     systemCPUInformation,
     systemMemoryInformation,
     systemOSInformation,
-    systemSoftwareInformation
+    systemSoftwareInformation,
+
+    Logger,
+    ServiceLogger,
 
 }
