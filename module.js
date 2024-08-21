@@ -59,27 +59,6 @@ function unixTimeConverter(UNIX_timestamp){
 
 }
 
-//Functions
-
-let appName, logPath, logName;
-let logToFile = false;
-
-const setAppName = (name) => {
-    appName = name;
-}
-
-const setLogPath = (value) => {
-    logPath = value;
-}
-
-const setLogName = (value) => {
-    logName = value;
-}
-
-const setLogToFile = (value) => {
-    logToFile = value
-}
-
 const getCurrentTimestamp = () => {
     const now = new Date();
     return now.toISOString();
@@ -442,6 +421,8 @@ const getLogLevel = (levelName) => {
     }
 }
 
+let appName, logPath, logName;
+let logToFile = false;
 let consoleLogLevel = 4;
 let serverLogLevel = 4;
 
@@ -501,13 +482,6 @@ class ServiceLogger {
 // Module init
 
 module.exports = {
-
-    appName: setAppName,
-    setAppName,
-
-    setLogName,
-    setLogPath,
-    setLogToFile,
 
     log,
     heading,
