@@ -468,6 +468,10 @@ class ServiceLogger {
         this.serviceName = serviceName;
     }
 
+    log(text) {
+        console.log(serverName('') + terminalText(this.serviceName, 'white', '', false) + divider('white', '') + terminalText(text, 'white', '', false))
+    }
+
     error() {
         console.log('ERRR')
     }
