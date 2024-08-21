@@ -515,9 +515,6 @@ module.exports = {
     serviceInfo,
     serviceWarning,
     serviceSuccess,
-    message,
-    info,
-    warning,
     success,
     
     systemInformation,
