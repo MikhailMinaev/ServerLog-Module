@@ -453,7 +453,7 @@ class Logger {
     }
 
     info(text) {
-        const formatedText = serverName('') + dividerBack('purple', '') + terminalText("  Info  ", 'white', 'purple', false) + divider('purple', '') + terminalText(text, 'purple', '', false);
+        const formatedText = serverName('') + dividerBack('purple', '') + terminalText("  Info  ", 'white', 'purple', false) + divider('purple', '') + terminalText(text, 'white', '', false);
         return new Log(text, formatedText);
     }
 
