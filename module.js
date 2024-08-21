@@ -235,8 +235,6 @@ const info = (infoText, logThisToFile = false) => {
 }
 
 const success = (infoText, logThisToFile = false) => {
-    
-    console.log(serverName('') + dividerBack('green', '') + terminalText("   Info  ", 'white', 'green', false) + divider('green', '') + terminalText(infoText, 'white', '', false))
 
     if (logToFile || logThisToFile == true) {
         fs.appendFile(path.join(logPath, `${logName}.log`), `${getCurrentTimestamp()} [Success]         | ${appName} | ${infoText} \n`, (err) => {
@@ -459,6 +457,11 @@ class Logger {
 
     message(text) {
         const formatedText = serverName('') + dividerBack('cyan', '') + terminalText(" Message", 'white', 'cyan', false) + divider('cyan', '') + terminalText(text, 'white', '', false);
+        return new Log(text, formatedText);
+    }
+
+    success(text) {
+        const formatedText = serverName('') + dividerBack('green', '') + terminalText(" Success", 'white', 'green', false) + divider('green', '') + terminalText(text, 'white', '', false);
         return new Log(text, formatedText);
     }
 }
