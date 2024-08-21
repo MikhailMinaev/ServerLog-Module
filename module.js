@@ -446,7 +446,7 @@ class Logger {
 
     heading(text) {
         console.log();
-        console.log(this.serverName('blue') + this.terminalText(" " + text, 'white', 'blue', false));
+        console.log(serverName('blue') + terminalText(text, 'white', 'blue', false));
         console.log();
     }
 
