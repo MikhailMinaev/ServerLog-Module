@@ -444,8 +444,8 @@ class Logger {
         return new Log(text, formatedText);
     }
 
-    info(text) {
-        const formatedText = serverName('') + dividerBack('purple', '') + terminalText("  Info  ", 'white', 'purple', false) + divider('purple', '') + terminalText(text, 'white', '', false);
+    success(text) {
+        const formatedText = serverName('') + dividerBack('green', '') + terminalText(" Success", 'white', 'green', false) + divider('green', '') + terminalText(text, 'white', '', false);
         return new Log(text, formatedText);
     }
 
@@ -459,8 +459,8 @@ class Logger {
         return new Log(text, formatedText);
     }
 
-    success(text) {
-        const formatedText = serverName('') + dividerBack('green', '') + terminalText(" Success", 'white', 'green', false) + divider('green', '') + terminalText(text, 'white', '', false);
+    info(text) {
+        const formatedText = serverName('') + dividerBack('purple', '') + terminalText("  Info  ", 'white', 'purple', false) + divider('purple', '') + terminalText(text, 'white', '', false);
         return new Log(text, formatedText);
     }
 }
@@ -485,13 +485,8 @@ class ServiceLogger {
         return new Log(text, formatedText).setServiceName(this.serviceName);
     }
 
-    debug(text) {
-        const formatedText = serverName('blue') + terminalText(this.serviceName, 'white', 'blue', false) + divider('blue', '') + terminalText(text, 'white', '', false);
-        return new Log(text, formatedText);
-    }
-
-    info(text) {
-        const formatedText = serverName('purple') + terminalText(this.serviceName, 'white', 'purple', false) + divider('purple', '') + terminalText(text, 'white', '', false);
+    success(text) {
+        const formatedText = serverName('green') + terminalText(this.serviceName, 'white', 'green', false) + divider('green', '') + terminalText(text, 'white', '', false);
         return new Log(text, formatedText);
     }
 
@@ -500,8 +495,13 @@ class ServiceLogger {
         return new Log(text, formatedText);
     }
 
-    success(text) {
-        const formatedText = serverName('green') + terminalText(this.serviceName, 'white', 'green', false) + divider('green', '') + terminalText(text, 'white', '', false);
+    debug(text) {
+        const formatedText = serverName('blue') + terminalText(this.serviceName, 'white', 'blue', false) + divider('blue', '') + terminalText(text, 'white', '', false);
+        return new Log(text, formatedText);
+    }
+
+    info(text) {
+        const formatedText = serverName('purple') + terminalText(this.serviceName, 'white', 'purple', false) + divider('purple', '') + terminalText(text, 'white', '', false);
         return new Log(text, formatedText);
     }
 }
