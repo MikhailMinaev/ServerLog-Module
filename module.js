@@ -177,8 +177,6 @@ const serviceWarning = (serviceName, text, logThisToFile = false) => {
 }
 
 const serviceSuccess = (serviceName, text, logThisToFile = false) => {
-    
-    console.log(serverName('green') + terminalText(" " + serviceName + " ", 'white', 'green', false) + divider('green', '') + terminalText(text, 'white', '', false))
 
     if (logToFile || logThisToFile == true) {
         fs.appendFile(path.join(logPath, `${logName}.log`), `${getCurrentTimestamp()} [Service Success] | ${appName} | ${serviceName} | ${text} \n`, (err) => {
@@ -494,6 +492,11 @@ class ServiceLogger {
 
     message(text) {
         const formatedText = serverName('cyan') + terminalText(this.serviceName, 'white', 'cyan', false) + divider('cyan', '') + terminalText(text, 'white', '', false);
+        return new Log(text, formatedText);
+    }
+
+    success(text) {
+        const formatedText = serverName('green') + terminalText(this.serviceName, 'white', 'green', false) + divider('green', '') + terminalText(text, 'white', '', false);
         return new Log(text, formatedText);
     }
 }
