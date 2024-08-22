@@ -507,43 +507,56 @@ class Logger {
 }
 
 class ServiceLogger {
-    constructor(serviceName) {
+
+    #serviceConsoleLogLevel;
+    #serviceServerLogLevel;
+
+    constructor(serviceName, options) {
         this.serviceName = serviceName;
+        this.#serviceConsoleLogLevel = options?.consoleLogLevel != undefined ? getLogLevel(options.consoleLogLevel) : consoleLogLevel;
+        this.#serviceServerLogLevel = options?.serverLogLevel != undefined ? getLogLevel(options.serverLogLevel) : serverLogLevel;
+    }
+
+    options() {
+        return {
+            consoleLogLevel: this.#serviceConsoleLogLevel,
+            serverLogLevel: this.#serviceServerLogLevel
+        }
     }
 
     log(text) {
         const formatedText = serverName('') + terminalText(this.serviceName, 'white', '', false) + divider('white', '') + terminalText(text, 'white', '', false);
-        return new Log(text, formatedText).setServiceName(this.serviceName).setLogLevel('all');
+        return new Log(text, formatedText, this.options()).setServiceName(this.serviceName).setLogLevel('all');
     }
 
     error(text) {
         const formatedText = serverName('red') + terminalText(this.serviceName, 'white', 'red', false) + divider('red', '') + terminalText(text, 'red', '', false);
-        return new Log(text, formatedText).setServiceName(this.serviceName).setLogType('Error');
+        return new Log(text, formatedText, this.options()).setServiceName(this.serviceName).setLogType('Error');
     }
 
     warning(text) {
         const formatedText = serverName('yellow') + terminalText(this.serviceName, 'white', 'yellow', false) + divider('yellow', '') + terminalText(text, 'yellow', '', false);
-        return new Log(text, formatedText).setServiceName(this.serviceName).setLogLevel('warning').setLogType('Warning');
+        return new Log(text, formatedText, this.options()).setServiceName(this.serviceName).setLogLevel('warning').setLogType('Warning');
     }
 
     success(text) {
         const formatedText = serverName('green') + terminalText(this.serviceName, 'white', 'green', false) + divider('green', '') + terminalText(text, 'white', '', false);
-        return new Log(text, formatedText).setServiceName(this.serviceName).setLogType('Success');
+        return new Log(text, formatedText, this.options()).setServiceName(this.serviceName).setLogType('Success');
     }
 
     message(text) {
         const formatedText = serverName('cyan') + terminalText(this.serviceName, 'white', 'cyan', false) + divider('cyan', '') + terminalText(text, 'white', '', false);
-        return new Log(text, formatedText).setServiceName(this.serviceName).setLogType('Message');
+        return new Log(text, formatedText, this.options()).setServiceName(this.serviceName).setLogType('Message');
     }
 
     debug(text) {
         const formatedText = serverName('blue') + terminalText(this.serviceName, 'white', 'blue', false) + divider('blue', '') + terminalText(text, 'white', '', false);
-        return new Log(text, formatedText).setServiceName(this.serviceName).setLogType('Debug');
+        return new Log(text, formatedText, this.options()).setServiceName(this.serviceName).setLogType('Debug');
     }
 
     info(text) {
         const formatedText = serverName('purple') + terminalText(this.serviceName, 'white', 'purple', false) + divider('purple', '') + terminalText(text, 'white', '', false);
-        return new Log(text, formatedText).setServiceName(this.serviceName).setLogType('Info');
+        return new Log(text, formatedText, this.options()).setServiceName(this.serviceName).setLogType('Info');
     }
 }
 
@@ -561,8 +574,8 @@ class Log {
     constructor(text, formatedText, options) {
         this.#text = text;
         this.#formatedText = formatedText;
-        this.#consoleLogLevel = 0;
-        this.#serverLogLevel = 0;
+        this.#consoleLogLevel = options?.consoleLogLevel != undefined ? options.consoleLogLevel : 0;
+        this.#serverLogLevel = options?.consoleLogLevel != undefined ? options.consoleLogLevel : 0;
         this.#logLevel = options?.logLevel != undefined ? getLogLevel(options.logLevel) : 7;
         this.#logType = options?.logType != undefined ? options.logType : 'Message';
         this.#logToFile = options?.logToFile != undefined ? options.logToFile : false;
