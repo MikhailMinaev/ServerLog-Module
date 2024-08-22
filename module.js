@@ -386,8 +386,6 @@ const getLogLevel = (levelName) => {
             return 5;
         case 'trace':
             return 6;
-        case 'all':
-            return 7;
     }
 }
 
@@ -426,15 +424,13 @@ const getLogLevelByType = (logType) => {
             return 5;
         case 'trace':
             return 6;
-        case 'all':
-            return 7;
     }
 }
 
 
 let appName, logPath, logName;
 let logToFile = false;
-let consoleLogLevel = 4;
+let consoleLogLevel = 6;
 let serverLogLevel = 4;
 
 class Logger {
@@ -575,10 +571,10 @@ class Log {
         this.#text = text;
         this.#formatedText = formatedText;
         this.#consoleLogLevel = options?.consoleLogLevel != undefined ? options.consoleLogLevel : 0;
-        this.#serverLogLevel = options?.consoleLogLevel != undefined ? options.consoleLogLevel : 0;
+        this.#serverLogLevel = options?.serverLogLevel != undefined ? options.serverLogLevel : 0;
         this.#logLevel = options?.logLevel != undefined ? getLogLevel(options.logLevel) : 7;
         this.#logType = options?.logType != undefined ? options.logType : 'Message';
-        this.#logToFile = options?.logToFile != undefined ? options.logToFile : false;
+        this.#logToFile = options?.logToFile != undefined ? options.logToFile : true;
     }
 
     /** @private */
@@ -606,7 +602,9 @@ class Log {
 
     process() {
         // Logging 
-        console.log(this.#formatedText)
+        if (this.#logLevel <= this.#consoleLogLevel) {
+            console.log(this.#formatedText)
+        }
 
         // Saving to file
 
@@ -625,8 +623,8 @@ class Log {
 
         messageTypeBlock = messageTypeBlock.padEnd(17, ' ')
 
-        if (this.#logToFile != false && (logPath != undefined && logPath != undefined)) {
-            console.log(`Saving to file: ${logPath}${logName} | Log level: ${this.#logLevel} | Log type: ${this.#logType}`)
+        if (this.#logToFile != false && (logPath != undefined && logPath != undefined) && (this.#logLevel <= this.#consoleLogLevel)) {
+            console.log(`Saving to file: ${logPath}${logName} | Log level: ${this.#logLevel} | Log type: ${this.#logType} | Console Log Level: ${this.#consoleLogLevel} | Server Log Level: ${this.#serverLogLevel}`)
             fs.appendFile(path.join(logPath, logName), `${getCurrentTimestamp()} ${messageTypeBlock} | ${appName} | ${fileServiceNameBlock}${this.#text} \n`, (err) => {
                 if (err) { console.error('Error when adding new data to log:', err); }
             });
