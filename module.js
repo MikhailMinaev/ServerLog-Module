@@ -520,7 +520,7 @@ class ServiceLogger {
 
     info(text) {
         const formatedText = serverName('purple') + terminalText(this.serviceName, 'white', 'purple', false) + divider('purple', '') + terminalText(text, 'white', '', false);
-        return new Log(text, formatedText).setServiceName(this.serviceName);
+        return new Log(text, formatedText).setServiceName(this.serviceName).setLogLevel('info');
     }
 }
 
@@ -530,7 +530,8 @@ class Log {
     #formatedText;
     #consoleLogLevel;
     #serverLogLevel;
-    #logToFile
+    #logToFile;
+    #logType;
     #serviceName = undefined;
 
     constructor(text, formatedText, options) {
@@ -538,12 +539,18 @@ class Log {
         this.#formatedText = formatedText;
         this.#consoleLogLevel = 0;
         this.#serverLogLevel = 0;
+        this.#logType = options?.logType != undefined ? getLogLevel(options.logType) : 0;
         this.#logToFile = options?.logToFile != undefined ? options.logToFile : false;
     }
 
     /** @private */
     setServiceName(serviceName) {
         this.#serviceName = serviceName;
+        return this;
+    }
+
+    setLogLevel(logLevel) {
+        this.#logType = getLogLevel(logLevel);
         return this;
     }
 
@@ -565,15 +572,20 @@ class Log {
             fileServiceNameBlock = `${this.#serviceName} | `
         }
 
-        if (this.#serviceName != undefined) {
-            messageTypeBlock = `[Service ${this.#serviceName}]`
+        if (this.#logType != 0 && this.#logType != 7) {
+            if (this.#serviceName != undefined) {
+                messageTypeBlock = `[Service ${getLogTypeName(this.#logType)}]`
+            } else {
+                messageTypeBlock = `[${getLogTypeName(this.#logType)}]`
+            }
         } else {
-            messageTypeBlock = `[${this.#serviceName}]`
+            messageTypeBlock = '[All Logs]'
         }
 
+        messageTypeBlock = messageTypeBlock.padEnd(17, ' ')
+
         if (this.#logToFile != false && (logPath != undefined && logPath != undefined)) {
-            console.log('File Save', fileServiceNameBlock)
-            fs.appendFile(path.join(logPath, logName), `${getCurrentTimestamp()} [Success]         | ${appName} | ${fileServiceNameBlock}${this.#text} \n`, (err) => {
+            fs.appendFile(path.join(logPath, logName), `${getCurrentTimestamp()} ${messageTypeBlock} | ${appName} | ${fileServiceNameBlock}${this.#text} \n`, (err) => {
                 if (err) { console.error('Error when adding new data to log:', err); }
             });
         }
