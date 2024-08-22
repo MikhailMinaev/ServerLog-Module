@@ -485,6 +485,11 @@ class ServiceLogger {
         return new Log(text, formatedText).setServiceName(this.serviceName);
     }
 
+    debug(text) {
+        const formatedText = serverName('blue') + terminalText(this.serviceName, 'white', 'blue', false) + divider('blue', '') + terminalText(text, 'white', '', false);
+        return new Log(text, formatedText);
+    }
+
     info(text) {
         const formatedText = serverName('purple') + terminalText(this.serviceName, 'white', 'purple', false) + divider('purple', '') + terminalText(text, 'white', '', false);
         return new Log(text, formatedText);
@@ -532,8 +537,6 @@ class Log {
 // Module init
 
 module.exports = {
-
-    serviceSuccess,
     
     systemInformation,
     systemTimeInformation,
