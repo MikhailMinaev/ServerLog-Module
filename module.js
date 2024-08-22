@@ -484,6 +484,10 @@ class Logger {
         }
     }
 
+    enableServerLogs() {
+        serverLogsEnanbled = true;
+    }
+
     options() {
         return {
             consoleLogLevel: consoleLogLevel,
