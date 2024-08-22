@@ -568,7 +568,7 @@ class Logger {
 
         restapiConnection = true;
 
-        log.success('Server logs initialized').process();
+        log.success(`Server logs initialized [SessionID: ${sessionToken}]`).process();
 
     }
 
