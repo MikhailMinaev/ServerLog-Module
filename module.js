@@ -10,17 +10,17 @@ const amqp = require('amqplib');
 // Helpers
 
 systemInformationServices = {
-    time:               '  Time   ',
-    system:             ' System  ',
-    bios:               '  Bios   ',
-    baseboard:          'Baseboard',
-    cpu:                '  CPU    ',
-    memory:             ' Memory  ',
-    graphics:           'Graphics ',
-    osInfo:             '   OS    ',
-    software:           'Software ',
-    diskLayout:         'Disks    ',
-    networkInterfaces:  'Network  ',
+    time:               '   Time   ',
+    system:             '  System  ',
+    bios:               '   Bios   ',
+    baseboard:          ' Baseboard',
+    cpu:                '   CPU    ',
+    memory:             '  Memory  ',
+    graphics:           ' Graphics ',
+    osInfo:             '    OS    ',
+    software:           ' Software ',
+    diskLayout:         ' Disks    ',
+    networkInterfaces:  ' Network  ',
 }
 
 function unixTimeConverter(UNIX_timestamp){
@@ -176,242 +176,6 @@ const parseArgs = (args, formatedText, data, dataFormat, textColor) => {
     return { text: text, formatedText: formatedText, message: message, data: data, dataFormat: dataFormat }
 }
 
-const serviceMessage = (serviceName, text, logThisToFile = false) => {
-
-    console.log(serverName('cyan') + terminalText(" " + serviceName + " ", 'white', 'cyan', false) + divider('cyan', '') + terminalText(text, 'white', '', false))
-
-    if (logToFile || logThisToFile == true) {
-        fs.appendFile(path.join(logPath, `${logName}.log`), `${getCurrentTimestamp()} [Service Message] | ${appName} | ${serviceName} | ${text} \n`, (err) => {
-            if (err) { console.error('Error when adding new data to log:', err); }
-        });
-    }
-
-}
-
-const serviceInfo = (serviceName, text, logThisToFile = false) => {
-
-    if (logToFile || logThisToFile == true) {
-        fs.appendFile(path.join(logPath, `${logName}.log`), `${getCurrentTimestamp()} [Service Info]    | ${appName} | ${serviceName} | ${text} \n`, (err) => {
-            if (err) { console.error('Error when adding new data to log:', err); }
-        });
-    }
-
-}
-
-const serviceError = (serviceName, text, logThisToFile = false) => {
-
-    if (logToFile || logThisToFile == true) {
-        fs.appendFile(path.join(logPath, `${logName}.log`), `${getCurrentTimestamp()} [Service Error]   | ${appName} | ${serviceName} | ${text} \n`, (err) => {
-            if (err) { console.error('Error when adding new data to log:', err); }
-        });
-    }
-
-}
-
-const serviceWarning = (serviceName, text, logThisToFile = false) => {
-
-    if (logToFile || logThisToFile == true) {
-        fs.appendFile(path.join(logPath, `${logName}.log`), `${getCurrentTimestamp()} [Service Warning] | ${appName} | ${serviceName} | ${text} \n`, (err) => {
-            if (err) { console.error('Error when adding new data to log:', err); }
-        });
-    }
-
-}
-
-const serviceSuccess = (serviceName, text, logThisToFile = false) => {
-
-    if (logToFile || logThisToFile == true) {
-        fs.appendFile(path.join(logPath, `${logName}.log`), `${getCurrentTimestamp()} [Service Success] | ${appName} | ${serviceName} | ${text} \n`, (err) => {
-            if (err) { console.error('Error when adding new data to log:', err); }
-        });
-    }
-
-}
-
-const message = (infoText, logThisToFile = false) => {
-
-    if (logToFile || logThisToFile == true) {
-        fs.appendFile(path.join(logPath, `${logName}.log`), `${getCurrentTimestamp()} [Message]         | ${appName} | ${infoText} \n`, (err) => {
-            if (err) { console.error('Error when adding new data to log:', err); }
-        });
-    }
-
-}
-
-const error = (errorText, logThisToFile = false) => {
-    
-    console.log()
-
-    if (logToFile || logThisToFile == true) {
-        fs.appendFile(path.join(logPath, `${logName}.log`), `${getCurrentTimestamp()} [Error]           | ${appName} | ${errorText} \n`, (err) => {
-            if (err) { console.error('Error when adding new data to log:', err); }
-        });
-    }
-
-}
-
-const warning = (warningText, logThisToFile = false) => {
-
-    if (logToFile || logThisToFile == true) {
-        fs.appendFile(path.join(logPath, `${logName}.log`), `${getCurrentTimestamp()} [Warning]         | ${appName} | ${warningText} \n`, (err) => {
-            if (err) { console.error('Error when adding new data to log:', err); }
-        });
-    }
-
-}
-
-const info = (infoText, logThisToFile = false) => {
-
-    if (logToFile || logThisToFile == true) {
-        fs.appendFile(path.join(logPath, `${logName}.log`), `${getCurrentTimestamp()} [Info]            | ${appName} | ${infoText} \n`, (err) => {
-            if (err) { console.error('Error when adding new data to log:', err); }
-        });
-    }
-
-}
-
-const success = (infoText, logThisToFile = false) => {
-
-    if (logToFile || logThisToFile == true) {
-        fs.appendFile(path.join(logPath, `${logName}.log`), `${getCurrentTimestamp()} [Success]         | ${appName} | ${infoText} \n`, (err) => {
-            if (err) { console.error('Error when adding new data to log:', err); }
-        });
-    }
-
-}
-
-const systemTimeInformation = async () => {
-
-    const time = await systeminformation.time()
-
-    const formatedTime = unixTimeConverter(time.current)
-
-    serviceInfo(systemInformationServices.time,     `\x1b[1mUTC Time:               \x1b[0m${formatedTime.UTCFormatedTime}`)
-    serviceInfo(systemInformationServices.time,     `\x1b[1mLocal Time:             \x1b[0m${formatedTime.localFormatedTime}`)
-    serviceInfo(systemInformationServices.time,     `\x1b[1mTimezone:               \x1b[0m${time.timezone}`)
-    serviceInfo(systemInformationServices.time,     `\x1b[1mTimezone:               \x1b[0m${time.timezoneName}`)
-
-    return
-}
-
-const systemDataInformation = async () => {
-
-    const system = await systeminformation.system()
-
-    serviceInfo(systemInformationServices.system,   `\x1b[1mUUID:                   \x1b[0m${system.uuid}`)
-
-    return
-}
-
-const systemBiosInformation = async () => {
-
-    const bios = await systeminformation.bios()
-
-    serviceInfo(systemInformationServices.bios,     `\x1b[1mBIOS Vendor:            \x1b[0m${bios.vendor}`)
-    serviceInfo(systemInformationServices.bios,     `\x1b[1mBIOS Version:           \x1b[0m${bios.version}`)
-
-    return
-}
-
-const systemCPUInformation = async () => {
-
-    const cpu = await systeminformation.cpu()
-    const cpuFlags = await systeminformation.cpuFlags()
-
-    serviceInfo(systemInformationServices.cpu,      `\x1b[1mCPU Company:            \x1b[0m${cpu.manufacturer}`)
-    serviceInfo(systemInformationServices.cpu,      `\x1b[1mCPU:                    \x1b[0m${cpu.brand}`)
-    serviceInfo(systemInformationServices.cpu,      `\x1b[1mCPU Cores:              \x1b[0m${cpu.cores}`)
-    serviceInfo(systemInformationServices.cpu,      `\x1b[1mCPU Physical Cores:     \x1b[0m${cpu.physicalCores}`)
-    serviceInfo(systemInformationServices.cpu,      `\x1b[1mCPU Performance Cores:  \x1b[0m${cpu.performanceCores}`)
-    serviceInfo(systemInformationServices.cpu,      `\x1b[1mCPU Efficiency Cores:   \x1b[0m${cpu.efficiencyCores}`)
-    serviceInfo(systemInformationServices.cpu,      `\x1b[1mProcessors:             \x1b[0m${cpu.processors}`)
-    serviceInfo(systemInformationServices.cpu,      `\x1b[1mVirtualization:         \x1b[0m${cpu.virtualization ? 'Yes' : 'No'}`)
-
-    if (cpuFlags.length > 0) {
-    serviceInfo(systemInformationServices.cpu,      `\x1b[1mFlags:                  \x1b[0m${cpuFlags}`)    
-    }
-
-    return
-}
-
-const systemMemoryInformation = async (measurement) => {
-
-    const memory = await systeminformation.mem()
-
-    let measurementDivider
-    let measurementSuffix
-
-    if (measurement == undefined) {
-        measurementDivider = 1024 * 1024 * 1024
-        measurementSuffix = 'GiB'
-    } else if (measurement == 'GB' || measurement == 'GiB') {
-        measurementDivider = 1024 * 1024 * 1024
-        measurementSuffix = 'GiB'
-    } else if (measurement == 'MB' || measurement == 'MiB') {
-        measurementDivider = 1024 * 1024
-        measurementSuffix = 'MiB'
-    }
-
-    serviceInfo(systemInformationServices.memory,   `\x1b[1mTotal:                  \x1b[0m${Math.round(memory.total / measurementDivider)} ${measurementSuffix}`)
-    serviceInfo(systemInformationServices.memory,   `\x1b[1mFree:                   \x1b[0m${Math.round(memory.free / measurementDivider)} ${measurementSuffix}`)
-    serviceInfo(systemInformationServices.memory,   `\x1b[1mUsed:                   \x1b[0m${Math.round(memory.used / measurementDivider)} ${measurementSuffix}`)
-    serviceInfo(systemInformationServices.memory,   `\x1b[1mActive:                 \x1b[0m${Math.round(memory.active / measurementDivider)} ${measurementSuffix}`)
-    serviceInfo(systemInformationServices.memory,   `\x1b[1mAvailable:              \x1b[0m${Math.round(memory.available / measurementDivider)} ${measurementSuffix}`)
-
-    return
-}
-
-const systemOSInformation = async () => {
-
-    const osInfo = await systeminformation.osInfo()
-
-    serviceInfo(systemInformationServices.osInfo,   `\x1b[1mPlatform:               \x1b[0m${osInfo.platform}`)
-    serviceInfo(systemInformationServices.osInfo,   `\x1b[1mDistro:                 \x1b[0m${osInfo.distro}`)
-    serviceInfo(systemInformationServices.osInfo,   `\x1b[1mVersion:                \x1b[0m${osInfo.release}`)
-    serviceInfo(systemInformationServices.osInfo,   `\x1b[1mCodename:               \x1b[0m${osInfo.codename}`)
-    serviceInfo(systemInformationServices.osInfo,   `\x1b[1mKernel:                 \x1b[0m${osInfo.kernel}`)
-    serviceInfo(systemInformationServices.osInfo,   `\x1b[1mArch:                   \x1b[0m${osInfo.arch}`)
-    serviceInfo(systemInformationServices.osInfo,   `\x1b[1mHostname:               \x1b[0m${osInfo.hostname}`)
-    serviceInfo(systemInformationServices.osInfo,   `\x1b[1mSerial:                 \x1b[0m${osInfo.serial}`)
-    serviceInfo(systemInformationServices.osInfo,   `\x1b[1mBuild:                  \x1b[0m${osInfo.build}`)
-
-    return
-}
-
-const systemSoftwareInformation = async () => {
-
-    const software = await systeminformation.versions()
-
-    serviceInfo(systemInformationServices.software, `\x1b[1mOpenSSL:                \x1b[0m${software.openssl}`)
-    serviceInfo(systemInformationServices.software, `\x1b[1mSystem OpenSSL:         \x1b[0m${software.systemOpenssl}`)
-    serviceInfo(systemInformationServices.software, `\x1b[1mNode:                   \x1b[0m${software.node}`)
-    serviceInfo(systemInformationServices.software, `\x1b[1mV8:                     \x1b[0m${software.v8}`)
-    serviceInfo(systemInformationServices.software, `\x1b[1mNPM:                    \x1b[0m${software.npm}`)
-    serviceInfo(systemInformationServices.software, `\x1b[1mGit:                    \x1b[0m${software.git}`)
-    serviceInfo(systemInformationServices.software, `\x1b[1mMySQL:                  \x1b[0m${software.mysql}`)
-    serviceInfo(systemInformationServices.software, `\x1b[1mRedis:                  \x1b[0m${software.redis}`)
-    serviceInfo(systemInformationServices.software, `\x1b[1mMongoDB:                \x1b[0m${software.mongodb}`)
-    serviceInfo(systemInformationServices.software, `\x1b[1mNginx:                  \x1b[0m${software.nginx}`)
-    serviceInfo(systemInformationServices.software, `\x1b[1mDocker:                 \x1b[0m${software.docker}`)
-    serviceInfo(systemInformationServices.software, `\x1b[1mPython:                 \x1b[0m${software.python3}`)
-    serviceInfo(systemInformationServices.software, `\x1b[1mPIP:                    \x1b[0m${software.pip3}`)
-    serviceInfo(systemInformationServices.software, `\x1b[1mZSH:                    \x1b[0m${software.zsh}`)
-    
-    return
-}
-
-const systemInformation = async () => {
-    await systemTimeInformation()
-    await systemDataInformation()
-    await systemBiosInformation()
-    await systemCPUInformation()
-    await systemMemoryInformation()
-    await systemOSInformation()
-    await systemSoftwareInformation()
-
-    return
-}
-
 // Classes refactor
 
 const getLogLevel = (levelName) => {
@@ -510,7 +274,6 @@ class ServerQueue {
 
         if (serverConnectionType == 'rest') {
             postToServerFunction = async () => {
-                console.log({ session: sessionToken, ...data })
                 try {
                     const response = fetch(`http://${restapiConnectionHost}/logs`, {
                         method: 'POST',
@@ -780,6 +543,153 @@ class Logger {
         let { text, formatedText, message, data, dataFormat } = parseArgs([...args], prefix, undefined, 'message', 'white');
         return new Log(text, formatedText, { ...this.options(), data: data, dataFormat: dataFormat, message: message }).setLogType('Info');
     }
+
+    async systemTimeInformation() {
+
+        const logger = new ServiceLogger(systemInformationServices.time, { consoleLogLevel: 'all' })
+
+        const time = await systeminformation.time()
+
+        const formatedTime = unixTimeConverter(time.current)
+
+
+        logger.info(`\x1b[1mUTC Time:               \x1b[0m${formatedTime.UTCFormatedTime}`).process()
+        logger.info(`\x1b[1mLocal Time:             \x1b[0m${formatedTime.localFormatedTime}`).process()
+        logger.info(`\x1b[1mTimezone:               \x1b[0m${time.timezone}`).process()
+        logger.info(`\x1b[1mTimezone:               \x1b[0m${time.timezoneName}`).process()
+
+        return
+    }
+
+    async systemDataInformation() {
+
+        const logger = new ServiceLogger(systemInformationServices.system, { consoleLogLevel: 'all' })
+
+        const system = await systeminformation.system()
+
+        logger.info(`\x1b[1mUUID:                   \x1b[0m${system.uuid}`).process()
+
+        return
+    }
+
+    async systemBiosInformation() {
+
+        const logger = new ServiceLogger(systemInformationServices.bios, { consoleLogLevel: 'all' })
+
+        const bios = await systeminformation.bios()
+
+        logger.info(`\x1b[1mBIOS Vendor:            \x1b[0m${bios.vendor}`).process()
+        logger.info(`\x1b[1mBIOS Version:           \x1b[0m${bios.version}`).process()
+
+        return
+    }
+
+    async systemCPUInformation() {
+
+        const logger = new ServiceLogger(systemInformationServices.cpu, { consoleLogLevel: 'all' })
+
+        const cpu = await systeminformation.cpu()
+        const cpuFlags = await systeminformation.cpuFlags()
+
+        logger.info(`\x1b[1mCPU Company:            \x1b[0m${cpu.manufacturer}`).process()
+        logger.info(`\x1b[1mCPU:                    \x1b[0m${cpu.brand}`).process()
+        logger.info(`\x1b[1mCPU Cores:              \x1b[0m${cpu.cores}`).process()
+        logger.info(`\x1b[1mCPU Physical Cores:     \x1b[0m${cpu.physicalCores}`).process()
+        logger.info(`\x1b[1mCPU Performance Cores:  \x1b[0m${cpu.performanceCores}`).process()
+        logger.info(`\x1b[1mCPU Efficiency Cores:   \x1b[0m${cpu.efficiencyCores}`).process()
+        logger.info(`\x1b[1mProcessors:             \x1b[0m${cpu.processors}`).process()
+        logger.info(`\x1b[1mVirtualization:         \x1b[0m${cpu.virtualization ? 'Yes' : 'No'}`).process()
+
+        if (cpuFlags.length > 0) {
+            logger.info(`\x1b[1mFlags:                  \x1b[0m${cpuFlags}`).process()
+        }
+
+        return
+    }
+
+    async systemMemoryInformation(measurement) {
+
+        const logger = new ServiceLogger(systemInformationServices.memory, { consoleLogLevel: 'all' })
+
+        const memory = await systeminformation.mem()
+
+        let measurementDivider
+        let measurementSuffix
+
+        if (measurement == undefined) {
+            measurementDivider = 1024 * 1024 * 1024
+            measurementSuffix = 'GiB'
+        } else if (measurement == 'GB' || measurement == 'GiB') {
+            measurementDivider = 1024 * 1024 * 1024
+            measurementSuffix = 'GiB'
+        } else if (measurement == 'MB' || measurement == 'MiB') {
+            measurementDivider = 1024 * 1024
+            measurementSuffix = 'MiB'
+        }
+
+        logger.info(`\x1b[1mTotal:                  \x1b[0m${Math.round(memory.total / measurementDivider)} ${measurementSuffix}`).process()
+        logger.info(`\x1b[1mFree:                   \x1b[0m${Math.round(memory.free / measurementDivider)} ${measurementSuffix}`).process()
+        logger.info(`\x1b[1mUsed:                   \x1b[0m${Math.round(memory.used / measurementDivider)} ${measurementSuffix}`).process()
+        logger.info(`\x1b[1mActive:                 \x1b[0m${Math.round(memory.active / measurementDivider)} ${measurementSuffix}`).process()
+        logger.info(`\x1b[1mAvailable:              \x1b[0m${Math.round(memory.available / measurementDivider)} ${measurementSuffix}`).process()
+
+        return
+    }
+
+    async systemOSInformation() {
+
+        const logger = new ServiceLogger(systemInformationServices.osInfo, { consoleLogLevel: 'all' })
+
+        const osInfo = await systeminformation.osInfo()
+
+        logger.info(`\x1b[1mPlatform:               \x1b[0m${osInfo.platform}`).process()
+        logger.info(`\x1b[1mDistro:                 \x1b[0m${osInfo.distro}`).process()
+        logger.info(`\x1b[1mVersion:                \x1b[0m${osInfo.release}`).process()
+        logger.info(`\x1b[1mCodename:               \x1b[0m${osInfo.codename}`).process()
+        logger.info(`\x1b[1mKernel:                 \x1b[0m${osInfo.kernel}`).process()
+        logger.info(`\x1b[1mArch:                   \x1b[0m${osInfo.arch}`).process()
+        logger.info(`\x1b[1mHostname:               \x1b[0m${osInfo.hostname}`).process()
+        logger.info(`\x1b[1mSerial:                 \x1b[0m${osInfo.serial}`).process()
+        logger.info(`\x1b[1mBuild:                  \x1b[0m${osInfo.build}`).process()
+
+        return
+    }
+
+    async systemSoftwareInformation() {
+
+        const logger = new ServiceLogger(systemInformationServices.software, { consoleLogLevel: 'all' })
+
+        const software = await systeminformation.versions()
+
+        logger.info(`\x1b[1mOpenSSL:                \x1b[0m${software.openssl}`).process()
+        logger.info(`\x1b[1mSystem OpenSSL:         \x1b[0m${software.systemOpenssl}`).process()
+        logger.info(`\x1b[1mNode:                   \x1b[0m${software.node}`).process()
+        logger.info(`\x1b[1mV8:                     \x1b[0m${software.v8}`).process()
+        logger.info(`\x1b[1mNPM:                    \x1b[0m${software.npm}`).process()
+        logger.info(`\x1b[1mGit:                    \x1b[0m${software.git}`).process()
+        logger.info(`\x1b[1mMySQL:                  \x1b[0m${software.mysql}`).process()
+        logger.info(`\x1b[1mRedis:                  \x1b[0m${software.redis}`).process()
+        logger.info(`\x1b[1mMongoDB:                \x1b[0m${software.mongodb}`).process()
+        logger.info(`\x1b[1mNginx:                  \x1b[0m${software.nginx}`).process()
+        logger.info(`\x1b[1mDocker:                 \x1b[0m${software.docker}`).process()
+        logger.info(`\x1b[1mPython:                 \x1b[0m${software.python3}`).process()
+        logger.info(`\x1b[1mPIP:                    \x1b[0m${software.pip3}`).process()
+        logger.info(`\x1b[1mZSH:                    \x1b[0m${software.zsh}`).process()
+
+        return
+    }
+
+    async systemInformation() {
+        await this.systemTimeInformation()
+        await this.systemDataInformation()
+        await this.systemBiosInformation()
+        await this.systemCPUInformation()
+        await this.systemMemoryInformation()
+        await this.systemOSInformation()
+        await this.systemSoftwareInformation()
+
+        return
+    }
 }
 
 class ServiceLogger {
@@ -806,41 +716,43 @@ class ServiceLogger {
     log(...args) {
         const prefix = serverName('') + terminalText(this.serviceName, 'white', '', false) + divider('white', '');
         let { text, formatedText, message, data, dataFormat } = parseArgs([...args], prefix, undefined, 'message', 'white');
-        return new Log(text, formatedText, this.options()).setServiceName(this.serviceName).setLogLevel('All');
+        return new Log(text, formatedText, { ...this.options(), data: data, dataFormat: dataFormat, message: message }).setServiceName(this.serviceName).setLogLevel('All');
     }
 
     error(...args) {
         const prefix = serverName('red') + terminalText(this.serviceName, 'white', 'red', false) + divider('red', '');
         let { text, formatedText, message, data, dataFormat } = parseArgs([...args], prefix, undefined, 'message', 'red');
-        return new Log(text, formatedText, this.options()).setServiceName(this.serviceName).setLogType('Error');
+        return new Log(text, formatedText, { ...this.options(), data: data, dataFormat: dataFormat, message: message }).setServiceName(this.serviceName).setLogType('Error');
     }
 
     warning(...args) {
         const prefix = serverName('yellow') + terminalText(this.serviceName, 'white', 'yellow', false) + divider('yellow', '');
         let { text, formatedText, message, data, dataFormat } = parseArgs([...args], prefix, undefined, 'message', 'yellow');
-        return new Log(text, formatedText, this.options()).setServiceName(this.serviceName).setLogLevel('warning').setLogType('Warning');
+        return new Log(text, formatedText, { ...this.options(), data: data, dataFormat: dataFormat, message: message }).setServiceName(this.serviceName).setLogLevel('warning').setLogType('Warning');
     }
 
     success(...args) {
         const prefix = serverName('green') + terminalText(this.serviceName, 'white', 'green', false) + divider('green', '');
         let { text, formatedText, message, data, dataFormat } = parseArgs([...args], prefix, undefined, 'message', 'white');
-        return new Log(text, formatedText, this.options()).setServiceName(this.serviceName).setLogType('Success');
+        return new Log(text, formatedText, { ...this.options(), data: data, dataFormat: dataFormat, message: message }).setServiceName(this.serviceName).setLogType('Success');
     }
 
     message(...args) {
         const prefix = serverName('cyan') + terminalText(this.serviceName, 'white', 'cyan', false) + divider('cyan', '');
         let { text, formatedText, message, data, dataFormat } = parseArgs([...args], prefix, undefined, 'message', 'white');
-        return new Log(text, formatedText, this.options()).setServiceName(this.serviceName).setLogType('Message');
+        return new Log(text, formatedText, { ...this.options(), data: data, dataFormat: dataFormat, message: message }).setServiceName(this.serviceName).setLogType('Message');
     }
 
     debug(...args) {
-        const formatedText = serverName('blue') + terminalText(this.serviceName, 'white', 'blue', false) + divider('blue', '');
-        return new Log(text, formatedText, this.options()).setServiceName(this.serviceName).setLogType('Debug');
+        const prefix = serverName('blue') + terminalText(this.serviceName, 'white', 'blue', false) + divider('blue', '');
+        let { text, formatedText, message, data, dataFormat } = parseArgs([...args], prefix, undefined, 'message', 'white');
+        return new Log(text, formatedText, { ...this.options(), data: data, dataFormat: dataFormat, message: message }).setServiceName(this.serviceName).setLogType('Debug');
     }
 
     info(...args) {
-        const formatedText = serverName('purple') + terminalText(this.serviceName, 'white', 'purple', false) + divider('purple', '');
-        return new Log(text, formatedText, this.options()).setServiceName(this.serviceName).setLogType('Info');
+        const prefix = serverName('purple') + terminalText(this.serviceName, 'white', 'purple', false) + divider('purple', '');
+        let { text, formatedText, message, data, dataFormat } = parseArgs([...args], prefix, undefined, 'message', 'white');
+        return new Log(text, formatedText, { ...this.options(), data: data, dataFormat: dataFormat, message: message }).setServiceName(this.serviceName).setLogType('Info');
     }
 }
 
@@ -862,7 +774,6 @@ class Log {
     #message = undefined;
 
     constructor(text, formatedText, options) {
-        // console.log(options)
         this.#text = text;
         this.#formatedText = formatedText;
         this.#consoleLogLevel = options?.consoleLogLevel != undefined ? options.consoleLogLevel : 0;
@@ -971,15 +882,6 @@ class Log {
 // Module init
 
 module.exports = {
-    
-    systemInformation,
-    systemTimeInformation,
-    systemDataInformation,
-    systemBiosInformation,
-    systemCPUInformation,
-    systemMemoryInformation,
-    systemOSInformation,
-    systemSoftwareInformation,
 
     Logger,
     ServiceLogger,
