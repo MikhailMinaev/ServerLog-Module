@@ -437,6 +437,7 @@ const getLogLevelByType = (logType) => {
 let appName, logPath, logName;
 let logToFile = false;
 let consoleLogLevel = 7;
+let fileLogLevel = 6;
 let serverLogLevel = 4;
 
 class Logger {
@@ -455,6 +456,10 @@ class Logger {
         serverLogLevel = getLogLevel(levelName);
     }
 
+    setFileLogLevel(levelName) {
+        fileLogLevel = getLogLevel(levelName);
+    }
+
     setLogToFile(value) {
         logToFile = value;
     }
@@ -470,7 +475,8 @@ class Logger {
     options() {
         return {
             consoleLogLevel: consoleLogLevel,
-            serverLogLevel: serverLogLevel
+            serverLogLevel: serverLogLevel,
+            fileLogLevel: fileLogLevel,
         }
     }
 
@@ -519,17 +525,20 @@ class ServiceLogger {
 
     #serviceConsoleLogLevel;
     #serviceServerLogLevel;
+    #serviceFileLogLevel;
 
     constructor(serviceName, options) {
         this.serviceName = serviceName;
         this.#serviceConsoleLogLevel = options?.consoleLogLevel != undefined ? getLogLevel(options.consoleLogLevel) : consoleLogLevel;
         this.#serviceServerLogLevel = options?.serverLogLevel != undefined ? getLogLevel(options.serverLogLevel) : serverLogLevel;
+        this.#serviceFileLogLevel = options?.fileLogLevel != undefined ? getLogLevel(options.fileLogLevel) : fileLogLevel;
     }
 
     options() {
         return {
             consoleLogLevel: this.#serviceConsoleLogLevel,
-            serverLogLevel: this.#serviceServerLogLevel
+            serverLogLevel: this.#serviceServerLogLevel,
+            fileLogLevel: this.#serviceFileLogLevel,
         }
     }
 
@@ -575,16 +584,19 @@ class Log {
     #formatedText;
     #consoleLogLevel;
     #serverLogLevel;
+    #fileLogLevel
     #logToFile;
     #logType;
     #logLevel;
     #serviceName = undefined;
 
     constructor(text, formatedText, options) {
+        console.log(options)
         this.#text = text;
         this.#formatedText = formatedText;
         this.#consoleLogLevel = options?.consoleLogLevel != undefined ? options.consoleLogLevel : 0;
         this.#serverLogLevel = options?.serverLogLevel != undefined ? options.serverLogLevel : 0;
+        this.#fileLogLevel = options?.fileLogLevel != undefined ? options.fileLogLevel : 0;
         this.#logLevel = options?.logLevel != undefined ? getLogLevel(options.logLevel) : 7;
         this.#logType = options?.logType != undefined ? options.logType : 'Message';
         this.#logToFile = options?.logToFile != undefined ? options.logToFile : true;
@@ -615,7 +627,7 @@ class Log {
 
     process() {
 
-        // console.log(`Check | Log level: ${this.#logLevel} | Log type: ${this.#logType.padEnd(7, ' ')} | Console Log Level: ${this.#consoleLogLevel} | Server Log Level: ${this.#serverLogLevel}`)
+        console.log(`Check | Log level: ${this.#logLevel} | Log type: ${this.#logType.padEnd(7, ' ')} | Console Log Level: ${this.#consoleLogLevel} | Server Log Level: ${this.#serverLogLevel}`)
 
         // Console Logging 
 
@@ -640,12 +652,14 @@ class Log {
 
         messageTypeBlock = messageTypeBlock.padEnd(17, ' ')
 
-        if (this.#logToFile != false && (logPath != undefined && logPath != undefined) && (this.#logLevel <= this.#consoleLogLevel)) {
-            // console.log(`Saving to file: ${logPath}${logName} | Log level: ${this.#logLevel} | Log type: ${this.#logType.padEnd(7, ' ') } | Console Log Level: ${this.#consoleLogLevel} | Server Log Level: ${this.#serverLogLevel}`)
+        if (this.#logToFile != false && (logPath != undefined && logPath != undefined) && (this.#logLevel <= this.#fileLogLevel)) {
+            console.log(`Saving to file: ${logPath}${logName} | Log level: ${this.#logLevel} | Log type: ${this.#logType.padEnd(7, ' ') } | Console Log Level: ${this.#consoleLogLevel} | Server Log Level: ${this.#serverLogLevel}`)
             fs.appendFile(path.join(logPath, logName), `${getCurrentTimestamp()} ${messageTypeBlock} | ${appName} | ${fileServiceNameBlock}${this.#text} \n`, (err) => {
                 if (err) { console.error('Error when adding new data to log:', err); }
             });
         }
+
+        console.log()
     }
 }
 
