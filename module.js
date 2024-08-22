@@ -4,6 +4,7 @@ const path = require('path');
 const process = require('process');
 const os = require('os');
 const { setTimeout } = require('timers/promises');
+const util = require('util');
 
 // Helpers
 
@@ -656,6 +657,38 @@ class Logger {
         }
     }
 
+    parseArgs(args, text, formatedText, data, dataFormat, textColor) {
+        args.forEach((arg, index) => {
+            if (index > 0) { text += ' ' };
+
+            if (typeof arg == 'string') {
+                formatedText += terminalText(arg, textColor, '', false);
+                text += arg;
+            } else if (arg instanceof Error) {
+                formatedText += '\n' + util.inspect(arg, { depth: 1000, colors: true, compact: true, maxArrayLength: 300 }) + ' '
+                text += '\n' + util.inspect(arg, { depth: 1000, colors: false, compact: true, maxArrayLength: 300 }) + ' '
+                data = util.inspect(arg, { depth: 1000, colors: false, compact: true, maxArrayLength: 300 })
+                dataFormat = 'message'
+            } else if (arg instanceof Array) {
+                formatedText += util.inspect(arg, { depth: 1000, colors: true, compact: true, maxArrayLength: 300 }) + ' '
+                text += util.inspect(arg, { depth: 1000, colors: false, compact: true, maxArrayLength: 300 }); + ' '
+                if (data == undefined) {
+                    data = arg
+                    dataFormat = 'array'
+                }
+            } else if (arg instanceof Object) {
+                formatedText += util.inspect(arg, { depth: 1000, colors: true, compact: true, maxArrayLength: 300 }) + ' '
+                text += util.inspect(arg, { depth: 1000, colors: false, compact: true, maxArrayLength: 300 }); + ' '
+                if (data == undefined) {
+                    data = arg
+                    dataFormat = 'object'
+                }
+            }
+
+        })
+        return { text: text, formatedText: formatedText, data: data, dataFormat: dataFormat }
+    }
+
     log(text) {
         const formatedText = serverName('clean') + text;
         return new Log(text, formatedText, this.options()).setLogType('All');
@@ -666,9 +699,11 @@ class Logger {
         return new Log(text, formatedText, this.options()).setLogType('Info');
     }
 
-    error(text) {
-        const formatedText = serverName('') + dividerBack('red', '') + terminalText("  Error ", 'white', 'red', false) + divider('red', '') + terminalText(text, 'red', '', false);
-        return new Log(text, formatedText, this.options()).setLogType('Error');
+    error(...args) {
+
+        let { text, formatedText, data, dataFormat } = this.parseArgs([...args], '', serverName('') + dividerBack('red', '') + terminalText("  Error ", 'white', 'red', false) + divider('red', ''), undefined, 'message', 'red');   
+
+        return new Log(text, formatedText, { ...this.options(), data: data, dataFormat: dataFormat }).setLogType('Error');
     }
 
     warning(text) {
@@ -767,6 +802,9 @@ class Log {
     #logLevel;
     #serviceName = undefined;
 
+    #data = undefined;
+    #dataFormat = undefined;
+
     constructor(text, formatedText, options) {
         // console.log(options)
         this.#text = text;
@@ -778,6 +816,9 @@ class Log {
         this.#logType = options?.logType != undefined ? options.logType : 'Message';
         this.#logToFile = options?.logToFile != undefined ? options.logToFile : undefined;
         this.#logToServer = options?.logToServer != undefined ? options.logToFile : undefined;
+
+        this.#data = options?.data != undefined ? options.data : undefined;
+        this.#dataFormat = options?.dataFormat != undefined ? options.dataFormat : undefined;
     }
 
     /** @private */
@@ -845,12 +886,23 @@ class Log {
         // Saving to server
 
         if (this.#logToServer != false && (serverLogsEnabled != false && condition != false) && (this.#logLevel <= this.#serverLogLevel || this.#logToServer == true)) {
-            console.log(`Saving to server: ${serverConnectionType} | Log level: ${this.#logLevel} | Log type: ${this.#logType.padEnd(7, ' ') } | Console Log Level: ${this.#consoleLogLevel} | Server Log Level: ${this.#serverLogLevel}`)
+            // console.log(`Saving to server: ${serverConnectionType} | Log level: ${this.#logLevel} | Log type: ${this.#logType.padEnd(7, ' ') } | Console Log Level: ${this.#consoleLogLevel} | Server Log Level: ${this.#serverLogLevel}`)
             
             const data = {
                 subservice: this.#serviceName == undefined ? appName : this.#serviceName,
                 timestamp: Date.now(),
                 type: this.#logType.toLowerCase(),
+            }
+
+            if (this.#data != undefined && this.#dataFormat != undefined && this.#dataFormat != 'message') {
+                data.data = this.#data;
+                data.format = this.#dataFormat;
+            } else if (this.#logType.toLowerCase() == 'error' && this.#data != undefined && this.#dataFormat == 'message') {
+                data.format = 'message';
+                data.message = this.#text
+            } else {
+                data.format = 'message';
+                data.message = this.#text;
             }
 
             queue.enqueue(data)
