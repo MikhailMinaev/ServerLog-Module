@@ -746,35 +746,39 @@ class Logger {
     }
 
     error(...args) {
-
-        let { text, formatedText, message, data, dataFormat } = this.parseArgs([...args], serverName('') + dividerBack('red', '') + terminalText("  Error ", 'white', 'red', false) + divider('red', ''), undefined, 'message', 'red');   
-
+        const prefix = serverName('') + dividerBack('red', '') + terminalText("  Error ", 'white', 'red', false) + divider('red', '');
+        let { text, formatedText, message, data, dataFormat } = this.parseArgs([...args], prefix, undefined, 'message', 'red');   
         return new Log(text, formatedText, { ...this.options(), data: data, dataFormat: dataFormat, message: message }).setLogType('Error');
     }
 
-    warning(text) {
-        const formatedText = serverName('') + dividerBack('yellow', '') + terminalText(" Warning", 'white', 'yellow', false) + divider('yellow', '') + terminalText(text, 'yellow', '', false);
-        return new Log(text, formatedText, this.options()).setLogType('Warning');
+    warning(...args) {
+        const prefix = serverName('') + dividerBack('yellow', '') + terminalText(" Warning", 'white', 'yellow', false) + divider('yellow', '');
+        let { text, formatedText, message, data, dataFormat } = this.parseArgs([...args], prefix, undefined, 'message', 'yellow');
+        return new Log(text, formatedText, { ...this.options(), data: data, dataFormat: dataFormat, message: message }).setLogType('Warning');
     }
 
-    success(text) {
-        const formatedText = serverName('') + dividerBack('green', '') + terminalText(" Success", 'white', 'green', false) + divider('green', '') + terminalText(text, 'white', '', false);
-        return new Log(text, formatedText, this.options()).setLogType('Success');
+    success(...args) {
+        const prefix = serverName('') + dividerBack('green', '') + terminalText(" Success", 'white', 'green', false) + divider('green', '');
+        let { text, formatedText, message, data, dataFormat } = this.parseArgs([...args], prefix, undefined, 'message', 'white');
+        return new Log(text, formatedText, { ...this.options(), data: data, dataFormat: dataFormat, message: message }).setLogType('Success');
     }
 
-    message(text) {
-        const formatedText = serverName('') + dividerBack('cyan', '') + terminalText(" Message", 'white', 'cyan', false) + divider('cyan', '') + terminalText(text, 'white', '', false);
-        return new Log(text, formatedText, this.options()).setLogType('Message');
+    message(...args) {
+        const prefix = serverName('') + dividerBack('cyan', '') + terminalText(" Message", 'white', 'cyan', false) + divider('cyan', '');
+        let { text, formatedText, message, data, dataFormat } = this.parseArgs([...args], prefix, undefined, 'message', 'white');
+        return new Log(text, formatedText, { ...this.options(), data: data, dataFormat: dataFormat, message: message }).setLogType('Message');
     }
 
-    debug(text) {
-        const formatedText = serverName('') + dividerBack('blue', '') + terminalText("  Debug ", 'white', 'blue', false) + divider('blue', '') + terminalText(text, 'white', '', false);
-        return new Log(text, formatedText, this.options()).setLogType('Debug');
+    debug(...args) {
+        const prefix = serverName('') + dividerBack('blue', '') + terminalText("  Debug ", 'white', 'blue', false) + divider('blue', '');
+        let { text, formatedText, message, data, dataFormat } = this.parseArgs([...args], prefix, undefined, 'message', 'white');
+        return new Log(text, formatedText, { ...this.options(), data: data, dataFormat: dataFormat, message: message }).setLogType('Debug');
     }
 
-    info(text) {
-        const formatedText = serverName('') + dividerBack('purple', '') + terminalText("  Info  ", 'white', 'purple', false) + divider('purple', '') + terminalText(text, 'white', '', false);
-        return new Log(text, formatedText, this.options()).setLogType('Info');
+    info(...args) {
+        const prefix = serverName('') + dividerBack('purple', '') + terminalText("  Info  ", 'white', 'purple', false) + divider('purple', '');
+        let { text, formatedText, message, data, dataFormat } = this.parseArgs([...args], prefix, undefined, 'message', 'white');
+        return new Log(text, formatedText, { ...this.options(), data: data, dataFormat: dataFormat, message: message }).setLogType('Info');
     }
 }
 
