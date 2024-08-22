@@ -1,6 +1,7 @@
 const systeminformation = require('systeminformation')
 const fs = require('fs');
 const path = require('path');
+const process = require('process');
 
 // Helpers
 
@@ -472,6 +473,17 @@ class Logger {
         logName = `${name}.log`;
     }
 
+    setServerConnectionType(type) {
+        switch (type.toLowerCase()) {
+            case 'rest', 'http':
+                serverConnectionType = 'rest';
+                break;
+            case 'rabbitmq', 'rabbit':
+                serverConnectionType = 'rabbitmq';
+                break;
+        }
+    }
+
     options() {
         return {
             consoleLogLevel: consoleLogLevel,
@@ -591,7 +603,7 @@ class Log {
     #serviceName = undefined;
 
     constructor(text, formatedText, options) {
-        console.log(options)
+        // console.log(options)
         this.#text = text;
         this.#formatedText = formatedText;
         this.#consoleLogLevel = options?.consoleLogLevel != undefined ? options.consoleLogLevel : 0;
@@ -627,7 +639,7 @@ class Log {
 
     process() {
 
-        console.log(`Check | Log level: ${this.#logLevel} | Log type: ${this.#logType.padEnd(7, ' ')} | Console Log Level: ${this.#consoleLogLevel} | Server Log Level: ${this.#serverLogLevel}`)
+        // console.log(`Check | Log level: ${this.#logLevel} | Log type: ${this.#logType.padEnd(7, ' ')} | Console Log Level: ${this.#consoleLogLevel} | Server Log Level: ${this.#serverLogLevel}`)
 
         // Console Logging 
 
@@ -653,15 +665,70 @@ class Log {
         messageTypeBlock = messageTypeBlock.padEnd(17, ' ')
 
         if (this.#logToFile != false && (logPath != undefined && logPath != undefined) && (this.#logLevel <= this.#fileLogLevel || this.#logToFile == true)) {
-            console.log(`Saving to file: ${logPath}${logName} | Log level: ${this.#logLevel} | Log type: ${this.#logType.padEnd(7, ' ') } | Console Log Level: ${this.#consoleLogLevel} | Server Log Level: ${this.#serverLogLevel}`)
+            // console.log(`Saving to file: ${logPath}${logName} | Log level: ${this.#logLevel} | Log type: ${this.#logType.padEnd(7, ' ') } | Console Log Level: ${this.#consoleLogLevel} | Server Log Level: ${this.#serverLogLevel}`)
             fs.appendFile(path.join(logPath, logName), `${getCurrentTimestamp()} ${messageTypeBlock} | ${appName} | ${fileServiceNameBlock}${this.#text} \n`, (err) => {
                 if (err) { console.error('Error when adding new data to log:', err); }
             });
         }
-
-        console.log()
     }
 }
+
+class ServerQueue {
+    constructor(conditionFn) {
+        this.queue = [];
+        this.isProcessing = false;
+        this.conditionFn = conditionFn;
+    }
+
+    enqueue(fn) {
+        this.queue.push(fn);
+        this.processQueue(); // Try to process the queue after adding a new function
+    }
+
+    async processQueue() {
+        if (this.isProcessing || !this.conditionFn()) {
+            // If queue is processing or the condition is not met, exit
+            return;
+        }
+
+        this.isProcessing = true;
+
+        while (this.queue.length > 0 && this.conditionFn()) {
+            const processFunction = this.queue.shift();
+            processFunction(); // Function to be executed
+        }
+
+        this.isProcessing = false;
+    }
+}
+
+let condition = false;
+let rabbitmqConnection = false;
+let restapiConnection = false;
+let serverLogsEnanbled;
+
+let serverConnectionType;
+
+let restapiConnectionHost = process.env.SERVERLOG_REST_HOST;
+let rabbitmqConnectionHost = process.env.SERVERLOG_RABBITMQ_HOST;
+
+const serverConditionFunction = () => condition;
+
+const queue = new ServerQueue(serverConditionFunction);
+
+queue.enqueue(() => {
+    console.log('Функция 1 выполняется')
+});
+
+queue.enqueue(() => {
+    console.log('Функция 2 выполняется');
+});
+
+setTimeout(() => {
+    condition = true;
+    console.log('Условие выполнено, очередь начала выполняться');
+    queue.processQueue(); // Попытка запуска очереди после изменения условия
+}, 3000);
 
 // Module init
 
