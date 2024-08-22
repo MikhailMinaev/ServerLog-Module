@@ -148,8 +148,6 @@ const serviceMessage = (serviceName, text, logThisToFile = false) => {
 
 const serviceInfo = (serviceName, text, logThisToFile = false) => {
 
-    console.log(serverName('purple') + terminalText(" " + serviceName + " ", 'white', 'purple', false) + divider('purple', '') + terminalText(text, 'white', '', false))
-
     if (logToFile || logThisToFile == true) {
         fs.appendFile(path.join(logPath, `${logName}.log`), `${getCurrentTimestamp()} [Service Info]    | ${appName} | ${serviceName} | ${text} \n`, (err) => {
             if (err) { console.error('Error when adding new data to log:', err); }
@@ -488,6 +486,11 @@ class ServiceLogger {
         const formatedText = serverName('yellow') + terminalText(this.serviceName, 'white', 'yellow', false) + divider('yellow', '') + terminalText(text, 'yellow', '', false);
         return new Log(text, formatedText).setServiceName(this.serviceName);
     }
+
+    info(text) {
+        const formatedText = serverName('purple') + terminalText(this.serviceName, 'white', 'purple', false) + divider('purple', '') + terminalText(text, 'white', '', false);
+        return new Log(text, formatedText);
+    }
 }
 
 class Log {
@@ -523,7 +526,6 @@ class Log {
 module.exports = {
 
     serviceMessage,
-    serviceInfo,
     serviceWarning,
     serviceSuccess,
     
