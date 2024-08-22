@@ -491,6 +491,11 @@ class ServiceLogger {
         const formatedText = serverName('purple') + terminalText(this.serviceName, 'white', 'purple', false) + divider('purple', '') + terminalText(text, 'white', '', false);
         return new Log(text, formatedText);
     }
+
+    message(text) {
+        const formatedText = serverName('') + dividerBack('cyan', '') + terminalText(" Message", 'white', 'cyan', false) + divider('cyan', '') + terminalText(text, 'white', '', false);
+        return new Log(text, formatedText);
+    }
 }
 
 class Log {
@@ -525,7 +530,6 @@ class Log {
 
 module.exports = {
 
-    serviceMessage,
     serviceWarning,
     serviceSuccess,
     
