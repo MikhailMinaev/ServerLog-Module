@@ -391,6 +391,24 @@ const getLogLevel = (levelName) => {
     }
 }
 
+const getLogTypeName = (logType) => {
+    switch (logType) {
+        case 1:
+            return 'Fatal';
+        case 2:
+            return 'Error';
+        case 3:
+            return 'Warning';
+        case 4:
+            return 'Info';
+        case 5:
+            return 'Debug';
+        case 6:
+            return 'Trace';
+    }
+}
+
+
 let appName, logPath, logName;
 let logToFile = false;
 let consoleLogLevel = 4;
@@ -545,6 +563,12 @@ class Log {
 
         if (this.#serviceName != undefined) {
             fileServiceNameBlock = `${this.#serviceName} | `
+        }
+
+        if (this.#serviceName != undefined) {
+            messageTypeBlock = `[Service ${this.#serviceName}]`
+        } else {
+            messageTypeBlock = `[${this.#serviceName}]`
         }
 
         if (this.#logToFile != false && (logPath != undefined && logPath != undefined)) {
