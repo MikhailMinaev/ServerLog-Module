@@ -610,7 +610,7 @@ class Logger {
                 body: JSON.stringify({ 
                     service: appName,
                     timestamp: Date.now(),
-                    hostname: os.hostname,
+                    hostname: os.hostname(),
                 })
             });
             sessionData = await response.json(); // Или response.json() для JSON-ответа
