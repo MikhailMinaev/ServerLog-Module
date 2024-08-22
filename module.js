@@ -518,7 +518,7 @@ class ServiceLogger {
 
     error(text) {
         const formatedText = serverName('red') + terminalText(this.serviceName, 'white', 'red', false) + divider('red', '') + terminalText(text, 'red', '', false);
-        return new Log(text, formatedText).setServiceName(this.serviceName).setLogLevel('error').setLogType('Error');
+        return new Log(text, formatedText).setServiceName(this.serviceName).setLogType('Error');
     }
 
     warning(text) {
@@ -528,22 +528,22 @@ class ServiceLogger {
 
     success(text) {
         const formatedText = serverName('green') + terminalText(this.serviceName, 'white', 'green', false) + divider('green', '') + terminalText(text, 'white', '', false);
-        return new Log(text, formatedText).setServiceName(this.serviceName).setLogLevel('info').setLogType('Success');
+        return new Log(text, formatedText).setServiceName(this.serviceName).setLogType('Success');
     }
 
     message(text) {
         const formatedText = serverName('cyan') + terminalText(this.serviceName, 'white', 'cyan', false) + divider('cyan', '') + terminalText(text, 'white', '', false);
-        return new Log(text, formatedText).setServiceName(this.serviceName).setLogLevel('info').setLogType('Message');
+        return new Log(text, formatedText).setServiceName(this.serviceName).setLogType('Message');
     }
 
     debug(text) {
         const formatedText = serverName('blue') + terminalText(this.serviceName, 'white', 'blue', false) + divider('blue', '') + terminalText(text, 'white', '', false);
-        return new Log(text, formatedText).setServiceName(this.serviceName).setLogLevel('debug').setLogType('Debug');
+        return new Log(text, formatedText).setServiceName(this.serviceName).setLogType('Debug');
     }
 
     info(text) {
         const formatedText = serverName('purple') + terminalText(this.serviceName, 'white', 'purple', false) + divider('purple', '') + terminalText(text, 'white', '', false);
-        return new Log(text, formatedText).setServiceName(this.serviceName).setLogLevel('info').setLogType('Info');
+        return new Log(text, formatedText).setServiceName(this.serviceName).setLogType('Info');
     }
 }
 
