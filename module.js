@@ -139,6 +139,43 @@ const dividerBack = (textColor, backgroundColor) => {
 
 }
 
+const parseArgs = (args, formatedText, data, dataFormat, textColor) => {
+
+    let message = '';
+    let text = '';
+
+    args.forEach((arg, index) => {
+        if (index > 0) { text += ' '; message += ' '; };
+
+        if (typeof arg == 'string') {
+            formatedText += terminalText(arg, textColor, '', false);
+            message += arg
+            text += arg;
+        } else if (arg instanceof Error) {
+            formatedText += '\n' + util.inspect(arg, { depth: 1000, colors: true, compact: true, maxArrayLength: 300 }) + ' '
+            text += '\n' + util.inspect(arg, { depth: 1000, colors: false, compact: true, maxArrayLength: 300 }) + ' '
+            data = util.inspect(arg, { depth: 1000, colors: false, compact: true, maxArrayLength: 300 })
+            dataFormat = 'message'
+        } else if (arg instanceof Array) {
+            formatedText += util.inspect(arg, { depth: 1000, colors: true, compact: true, maxArrayLength: 300 }) + ' '
+            text += util.inspect(arg, { depth: 1000, colors: false, compact: true, maxArrayLength: 300 }); + ' '
+            if (data == undefined) {
+                data = arg
+                dataFormat = 'array'
+            }
+        } else if (arg instanceof Object) {
+            formatedText += util.inspect(arg, { depth: 1000, colors: true, compact: true, maxArrayLength: 300 }) + ' '
+            text += util.inspect(arg, { depth: 1000, colors: false, compact: true, maxArrayLength: 300 }); + ' '
+            if (data == undefined) {
+                data = arg
+                dataFormat = 'object'
+            }
+        }
+
+    })
+    return { text: text, formatedText: formatedText, message: message, data: data, dataFormat: dataFormat }
+}
+
 const serviceMessage = (serviceName, text, logThisToFile = false) => {
 
     console.log(serverName('cyan') + terminalText(" " + serviceName + " ", 'white', 'cyan', false) + divider('cyan', '') + terminalText(text, 'white', '', false))
@@ -698,43 +735,6 @@ class Logger {
         }
     }
 
-    parseArgs(args, formatedText, data, dataFormat, textColor) {
-
-        let message = '';
-        let text = '';
-
-        args.forEach((arg, index) => {
-            if (index > 0) { text += ' '; message += ' '; };
-
-            if (typeof arg == 'string') {
-                formatedText += terminalText(arg, textColor, '', false);
-                message += arg
-                text += arg;
-            } else if (arg instanceof Error) {
-                formatedText += '\n' + util.inspect(arg, { depth: 1000, colors: true, compact: true, maxArrayLength: 300 }) + ' '
-                text += '\n' + util.inspect(arg, { depth: 1000, colors: false, compact: true, maxArrayLength: 300 }) + ' '
-                data = util.inspect(arg, { depth: 1000, colors: false, compact: true, maxArrayLength: 300 })
-                dataFormat = 'message'
-            } else if (arg instanceof Array) {
-                formatedText += util.inspect(arg, { depth: 1000, colors: true, compact: true, maxArrayLength: 300 }) + ' '
-                text += util.inspect(arg, { depth: 1000, colors: false, compact: true, maxArrayLength: 300 }); + ' '
-                if (data == undefined) {
-                    data = arg
-                    dataFormat = 'array'
-                }
-            } else if (arg instanceof Object) {
-                formatedText += util.inspect(arg, { depth: 1000, colors: true, compact: true, maxArrayLength: 300 }) + ' '
-                text += util.inspect(arg, { depth: 1000, colors: false, compact: true, maxArrayLength: 300 }); + ' '
-                if (data == undefined) {
-                    data = arg
-                    dataFormat = 'object'
-                }
-            }
-
-        })
-        return { text: text, formatedText: formatedText, message: message, data: data, dataFormat: dataFormat }
-    }
-
     log(text) {
         const formatedText = serverName('clean') + text;
         return new Log(text, formatedText, this.options()).setLogType('All');
@@ -747,37 +747,37 @@ class Logger {
 
     error(...args) {
         const prefix = serverName('') + dividerBack('red', '') + terminalText("  Error ", 'white', 'red', false) + divider('red', '');
-        let { text, formatedText, message, data, dataFormat } = this.parseArgs([...args], prefix, undefined, 'message', 'red');   
+        let { text, formatedText, message, data, dataFormat } = parseArgs([...args], prefix, undefined, 'message', 'red');   
         return new Log(text, formatedText, { ...this.options(), data: data, dataFormat: dataFormat, message: message }).setLogType('Error');
     }
 
     warning(...args) {
         const prefix = serverName('') + dividerBack('yellow', '') + terminalText(" Warning", 'white', 'yellow', false) + divider('yellow', '');
-        let { text, formatedText, message, data, dataFormat } = this.parseArgs([...args], prefix, undefined, 'message', 'yellow');
+        let { text, formatedText, message, data, dataFormat } = parseArgs([...args], prefix, undefined, 'message', 'yellow');
         return new Log(text, formatedText, { ...this.options(), data: data, dataFormat: dataFormat, message: message }).setLogType('Warning');
     }
 
     success(...args) {
         const prefix = serverName('') + dividerBack('green', '') + terminalText(" Success", 'white', 'green', false) + divider('green', '');
-        let { text, formatedText, message, data, dataFormat } = this.parseArgs([...args], prefix, undefined, 'message', 'white');
+        let { text, formatedText, message, data, dataFormat } = parseArgs([...args], prefix, undefined, 'message', 'white');
         return new Log(text, formatedText, { ...this.options(), data: data, dataFormat: dataFormat, message: message }).setLogType('Success');
     }
 
     message(...args) {
         const prefix = serverName('') + dividerBack('cyan', '') + terminalText(" Message", 'white', 'cyan', false) + divider('cyan', '');
-        let { text, formatedText, message, data, dataFormat } = this.parseArgs([...args], prefix, undefined, 'message', 'white');
+        let { text, formatedText, message, data, dataFormat } = parseArgs([...args], prefix, undefined, 'message', 'white');
         return new Log(text, formatedText, { ...this.options(), data: data, dataFormat: dataFormat, message: message }).setLogType('Message');
     }
 
     debug(...args) {
         const prefix = serverName('') + dividerBack('blue', '') + terminalText("  Debug ", 'white', 'blue', false) + divider('blue', '');
-        let { text, formatedText, message, data, dataFormat } = this.parseArgs([...args], prefix, undefined, 'message', 'white');
+        let { text, formatedText, message, data, dataFormat } = parseArgs([...args], prefix, undefined, 'message', 'white');
         return new Log(text, formatedText, { ...this.options(), data: data, dataFormat: dataFormat, message: message }).setLogType('Debug');
     }
 
     info(...args) {
         const prefix = serverName('') + dividerBack('purple', '') + terminalText("  Info  ", 'white', 'purple', false) + divider('purple', '');
-        let { text, formatedText, message, data, dataFormat } = this.parseArgs([...args], prefix, undefined, 'message', 'white');
+        let { text, formatedText, message, data, dataFormat } = parseArgs([...args], prefix, undefined, 'message', 'white');
         return new Log(text, formatedText, { ...this.options(), data: data, dataFormat: dataFormat, message: message }).setLogType('Info');
     }
 }
