@@ -464,21 +464,34 @@ class ServerQueue {
 
     enqueue(data) {
 
-        let pustToServerFunction = () => { }
+        let postToServerFunction = () => { }
 
         if (serverConnectionType == 'rest') {
-            pustToServerFunction = () => {
-                console.log({ session: sessionToken, ...data})
+            postToServerFunction = async () => {
+                console.log({ session: sessionToken, ...data })
+                try {
+                    const response = fetch(`http://${restapiConnectionHost}/logs`, {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify({ session: sessionToken, ...data })
+                    });
+                    // const data = await response.json(); // Парсинг JSON ответа
+                    // console.log(data); // Ответ от сервера
+                } catch (error) {
+                    console.error('Ошибка:', error);
+                }
             }
         } else if (serverConnectionType == 'rabbitmq') {
-            pustToServerFunction = () => {
+            postToServerFunction = () => {
                 console.log({ session: sessionToken, ...data})
             }
         } else {
             return
         }
 
-        this.queue.push(pustToServerFunction);
+        this.queue.push(postToServerFunction);
         this.processQueue(); // Try to process the queue after adding a new function
     }
 
@@ -657,12 +670,17 @@ class Logger {
         }
     }
 
-    parseArgs(args, text, formatedText, data, dataFormat, textColor) {
+    parseArgs(args, formatedText, data, dataFormat, textColor) {
+
+        let message = '';
+        let text = '';
+
         args.forEach((arg, index) => {
-            if (index > 0) { text += ' ' };
+            if (index > 0) { text += ' '; message += ' '; };
 
             if (typeof arg == 'string') {
                 formatedText += terminalText(arg, textColor, '', false);
+                message += arg
                 text += arg;
             } else if (arg instanceof Error) {
                 formatedText += '\n' + util.inspect(arg, { depth: 1000, colors: true, compact: true, maxArrayLength: 300 }) + ' '
@@ -686,7 +704,7 @@ class Logger {
             }
 
         })
-        return { text: text, formatedText: formatedText, data: data, dataFormat: dataFormat }
+        return { text: text, formatedText: formatedText, message: message, data: data, dataFormat: dataFormat }
     }
 
     log(text) {
@@ -701,9 +719,9 @@ class Logger {
 
     error(...args) {
 
-        let { text, formatedText, data, dataFormat } = this.parseArgs([...args], '', serverName('') + dividerBack('red', '') + terminalText("  Error ", 'white', 'red', false) + divider('red', ''), undefined, 'message', 'red');   
+        let { text, formatedText, message, data, dataFormat } = this.parseArgs([...args], serverName('') + dividerBack('red', '') + terminalText("  Error ", 'white', 'red', false) + divider('red', ''), undefined, 'message', 'red');   
 
-        return new Log(text, formatedText, { ...this.options(), data: data, dataFormat: dataFormat }).setLogType('Error');
+        return new Log(text, formatedText, { ...this.options(), data: data, dataFormat: dataFormat, message: message }).setLogType('Error');
     }
 
     warning(text) {
@@ -804,6 +822,7 @@ class Log {
 
     #data = undefined;
     #dataFormat = undefined;
+    #message = undefined;
 
     constructor(text, formatedText, options) {
         // console.log(options)
@@ -819,6 +838,7 @@ class Log {
 
         this.#data = options?.data != undefined ? options.data : undefined;
         this.#dataFormat = options?.dataFormat != undefined ? options.dataFormat : undefined;
+        this.#message = options?.message != undefined ? options.message : undefined;
     }
 
     /** @private */
@@ -897,6 +917,7 @@ class Log {
             if (this.#data != undefined && this.#dataFormat != undefined && this.#dataFormat != 'message') {
                 data.data = this.#data;
                 data.format = this.#dataFormat;
+                data.message = this.#message;
             } else if (this.#logType.toLowerCase() == 'error' && this.#data != undefined && this.#dataFormat == 'message') {
                 data.format = 'message';
                 data.message = this.#text
