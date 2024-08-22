@@ -803,38 +803,43 @@ class ServiceLogger {
         }
     }
 
-    log(text) {
-        const formatedText = serverName('') + terminalText(this.serviceName, 'white', '', false) + divider('white', '') + terminalText(text, 'white', '', false);
+    log(...args) {
+        const prefix = serverName('') + terminalText(this.serviceName, 'white', '', false) + divider('white', '');
+        let { text, formatedText, message, data, dataFormat } = parseArgs([...args], prefix, undefined, 'message', 'white');
         return new Log(text, formatedText, this.options()).setServiceName(this.serviceName).setLogLevel('All');
     }
 
-    error(text) {
-        const formatedText = serverName('red') + terminalText(this.serviceName, 'white', 'red', false) + divider('red', '') + terminalText(text, 'red', '', false);
+    error(...args) {
+        const prefix = serverName('red') + terminalText(this.serviceName, 'white', 'red', false) + divider('red', '');
+        let { text, formatedText, message, data, dataFormat } = parseArgs([...args], prefix, undefined, 'message', 'red');
         return new Log(text, formatedText, this.options()).setServiceName(this.serviceName).setLogType('Error');
     }
 
-    warning(text) {
-        const formatedText = serverName('yellow') + terminalText(this.serviceName, 'white', 'yellow', false) + divider('yellow', '') + terminalText(text, 'yellow', '', false);
+    warning(...args) {
+        const prefix = serverName('yellow') + terminalText(this.serviceName, 'white', 'yellow', false) + divider('yellow', '');
+        let { text, formatedText, message, data, dataFormat } = parseArgs([...args], prefix, undefined, 'message', 'yellow');
         return new Log(text, formatedText, this.options()).setServiceName(this.serviceName).setLogLevel('warning').setLogType('Warning');
     }
 
-    success(text) {
-        const formatedText = serverName('green') + terminalText(this.serviceName, 'white', 'green', false) + divider('green', '') + terminalText(text, 'white', '', false);
+    success(...args) {
+        const prefix = serverName('green') + terminalText(this.serviceName, 'white', 'green', false) + divider('green', '');
+        let { text, formatedText, message, data, dataFormat } = parseArgs([...args], prefix, undefined, 'message', 'white');
         return new Log(text, formatedText, this.options()).setServiceName(this.serviceName).setLogType('Success');
     }
 
-    message(text) {
-        const formatedText = serverName('cyan') + terminalText(this.serviceName, 'white', 'cyan', false) + divider('cyan', '') + terminalText(text, 'white', '', false);
+    message(...args) {
+        const prefix = serverName('cyan') + terminalText(this.serviceName, 'white', 'cyan', false) + divider('cyan', '');
+        let { text, formatedText, message, data, dataFormat } = parseArgs([...args], prefix, undefined, 'message', 'white');
         return new Log(text, formatedText, this.options()).setServiceName(this.serviceName).setLogType('Message');
     }
 
-    debug(text) {
-        const formatedText = serverName('blue') + terminalText(this.serviceName, 'white', 'blue', false) + divider('blue', '') + terminalText(text, 'white', '', false);
+    debug(...args) {
+        const formatedText = serverName('blue') + terminalText(this.serviceName, 'white', 'blue', false) + divider('blue', '');
         return new Log(text, formatedText, this.options()).setServiceName(this.serviceName).setLogType('Debug');
     }
 
-    info(text) {
-        const formatedText = serverName('purple') + terminalText(this.serviceName, 'white', 'purple', false) + divider('purple', '') + terminalText(text, 'white', '', false);
+    info(...args) {
+        const formatedText = serverName('purple') + terminalText(this.serviceName, 'white', 'purple', false) + divider('purple', '');
         return new Log(text, formatedText, this.options()).setServiceName(this.serviceName).setLogType('Info');
     }
 }
