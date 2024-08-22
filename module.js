@@ -2,6 +2,7 @@ const systeminformation = require('systeminformation')
 const fs = require('fs');
 const path = require('path');
 const process = require('process');
+const os = require('os')
 
 // Helpers
 
@@ -441,6 +442,17 @@ let consoleLogLevel = 7;
 let fileLogLevel = 6;
 let serverLogLevel = 4;
 
+let condition = false;
+let rabbitmqConnection = false;
+let restapiConnection = false;
+let serverLogsEnabled = false;
+let sessionToken = '';
+
+let serverConnectionType;
+
+let restapiConnectionHost = process.env.SERVERLOG_REST_HOST;
+let rabbitmqConnectionHost = process.env.SERVERLOG_RABBITMQ_HOST;
+
 class Logger {
     
     constructor() {}
@@ -475,17 +487,104 @@ class Logger {
 
     setServerConnectionType(type) {
         switch (type.toLowerCase()) {
-            case 'rest', 'http':
+            case 'rest':
+            case 'http':
                 serverConnectionType = 'rest';
                 break;
-            case 'rabbitmq', 'rabbit':
+            case 'rabbitmq':
+            case 'rabbit':
                 serverConnectionType = 'rabbitmq';
                 break;
         }
     }
 
+    setRestApiConnectionHost(host) {
+        restapiConnectionHost = host;
+    }
+
     enableServerLogs() {
-        serverLogsEnanbled = true;
+        serverLogsEnabled = true;
+    }
+
+    async initializeServerLogs() {
+
+        const log = new ServiceLogger('Initialize Server Logs');
+
+        if (serverLogsEnabled == false) {
+            log.warning('Server logs are not enabled!').process();
+            return
+        } else if (serverConnectionType == undefined) {
+            log.warning('Server connection type is not defined!').process();
+            return
+        } else if (restapiConnectionHost == undefined) {
+            log.warning('REST API connection to LogsCollectService host is not defined!').process();
+            return
+        }
+
+        const statusResponse = await this.getStatusOfRestApiConnection()
+
+        if (statusResponse == undefined) {
+            log.warning('REST API connection to LogsCollectService host is not available!').process();
+            return
+        } else if (statusResponse.active != true) {
+            log.warning('REST API connection to LogsCollectService host is not active!').process();
+            return
+        }
+
+        let sessionData = {}
+
+        try {
+            const response = await fetch(`http://${restapiConnectionHost}/sessions`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ 
+                    service: appName,
+                    timestamp: Date.now(),
+                    hostname: os.hostname,
+                })
+            });
+            sessionData = await response.json(); // Или response.json() для JSON-ответа
+        } catch (error) {
+            log.error('Get session data error').process();
+            return
+        }
+
+        // Check Session data 
+
+        if (sessionData.error == true) {
+            log.error('Get session data error').process();
+            return
+        } else if (sessionData.data == undefined) { 
+            log.error('Get session data undefined').process();
+            return
+        } else if (sessionData.data.id == undefined) {
+            log.error('Get session id undefined').process();
+            return
+        } else {
+            sessionToken = sessionData.data.id
+        }
+
+        restapiConnection = true;
+
+        log.success('Server logs initialized').process();
+
+    }
+
+    async getStatusOfRestApiConnection() {
+
+        const log = new ServiceLogger('REST API Status');
+
+        try {
+            const response = await fetch(`http://${restapiConnectionHost}/status`);
+            const data = await response.json(); // Или response.json() для JSON-ответа
+            return data
+        } catch (error) {
+            log.error('Get status of REST API connection error').process();
+            return undefined
+        }
+
     }
 
     options() {
@@ -705,16 +804,6 @@ class ServerQueue {
         this.isProcessing = false;
     }
 }
-
-let condition = false;
-let rabbitmqConnection = false;
-let restapiConnection = false;
-let serverLogsEnanbled;
-
-let serverConnectionType;
-
-let restapiConnectionHost = process.env.SERVERLOG_REST_HOST;
-let rabbitmqConnectionHost = process.env.SERVERLOG_RABBITMQ_HOST;
 
 const serverConditionFunction = () => condition;
 
