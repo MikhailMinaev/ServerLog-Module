@@ -530,7 +530,6 @@ class Log {
 
 module.exports = {
 
-    serviceWarning,
     serviceSuccess,
     
     systemInformation,
