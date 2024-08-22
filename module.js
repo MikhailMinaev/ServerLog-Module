@@ -601,7 +601,9 @@ class Log {
     }
 
     process() {
-        // Logging 
+
+        // Console Logging 
+
         if (this.#logLevel <= this.#consoleLogLevel) {
             console.log(this.#formatedText)
         }
