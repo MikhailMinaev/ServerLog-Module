@@ -2,7 +2,8 @@ const systeminformation = require('systeminformation')
 const fs = require('fs');
 const path = require('path');
 const process = require('process');
-const os = require('os')
+const os = require('os');
+const { setTimeout } = require('timers/promises');
 
 // Helpers
 
@@ -442,7 +443,7 @@ let consoleLogLevel = 7;
 let fileLogLevel = 6;
 let serverLogLevel = 4;
 
-let condition = false;
+let condition = undefined;
 let rabbitmqConnection = false;
 let restapiConnection = false;
 let serverLogsEnabled = false;
@@ -452,6 +453,54 @@ let serverConnectionType;
 
 let restapiConnectionHost = process.env.SERVERLOG_REST_HOST;
 let rabbitmqConnectionHost = process.env.SERVERLOG_RABBITMQ_HOST;
+
+class ServerQueue {
+    constructor(conditionFn) {
+        this.queue = [];
+        this.isProcessing = false;
+        this.conditionFn = conditionFn;
+    }
+
+    enqueue(data) {
+
+        let pustToServerFunction = () => { }
+
+        if (serverConnectionType == 'rest') {
+            pustToServerFunction = () => {
+                console.log({ session: sessionToken, ...data})
+            }
+        } else if (serverConnectionType == 'rabbitmq') {
+            pustToServerFunction = () => {
+                console.log({ session: sessionToken, ...data})
+            }
+        } else {
+            return
+        }
+
+        this.queue.push(pustToServerFunction);
+        this.processQueue(); // Try to process the queue after adding a new function
+    }
+
+    async processQueue() {
+        if (this.isProcessing || !this.conditionFn()) {
+            // If queue is processing or the condition is not met, exit
+            return;
+        }
+
+        this.isProcessing = true;
+
+        while (this.queue.length > 0 && this.conditionFn()) {
+            const processFunction = this.queue.shift();
+            processFunction(); // Function to be executed
+        }
+
+        this.isProcessing = false;
+    }
+}
+
+const serverConditionFunction = () => condition;
+
+const queue = new ServerQueue(serverConditionFunction);
 
 class Logger {
     
@@ -512,12 +561,15 @@ class Logger {
 
         if (serverLogsEnabled == false) {
             log.warning('Server logs are not enabled!').process();
+            condition = false;
             return
         } else if (serverConnectionType == undefined) {
             log.warning('Server connection type is not defined!').process();
+            condition = false;
             return
         } else if (restapiConnectionHost == undefined) {
             log.warning('REST API connection to LogsCollectService host is not defined!').process();
+            condition = false;
             return
         }
 
@@ -525,9 +577,11 @@ class Logger {
 
         if (statusResponse == undefined) {
             log.warning('REST API connection to LogsCollectService host is not available!').process();
+            condition = false;
             return
         } else if (statusResponse.active != true) {
             log.warning('REST API connection to LogsCollectService host is not active!').process();
+            condition = false;
             return
         }
 
@@ -548,6 +602,7 @@ class Logger {
             sessionData = await response.json(); // Или response.json() для JSON-ответа
         } catch (error) {
             log.error('Get session data error').process();
+            condition = false;
             return
         }
 
@@ -555,20 +610,26 @@ class Logger {
 
         if (sessionData.error == true) {
             log.error('Get session data error').process();
+            condition = false;
             return
         } else if (sessionData.data == undefined) { 
             log.error('Get session data undefined').process();
+            condition = false;
             return
         } else if (sessionData.data.id == undefined) {
             log.error('Get session id undefined').process();
+            condition = false;
             return
         } else {
             sessionToken = sessionData.data.id
         }
 
-        restapiConnection = true;
-
         log.success(`Server logs initialized [SessionID: ${sessionToken}]`).process();
+
+        restapiConnection = true;
+        condition = true
+
+        queue.processQueue();
 
     }
 
@@ -701,6 +762,7 @@ class Log {
     #serverLogLevel;
     #fileLogLevel
     #logToFile;
+    #logToServer;
     #logType;
     #logLevel;
     #serviceName = undefined;
@@ -715,6 +777,7 @@ class Log {
         this.#logLevel = options?.logLevel != undefined ? getLogLevel(options.logLevel) : 7;
         this.#logType = options?.logType != undefined ? options.logType : 'Message';
         this.#logToFile = options?.logToFile != undefined ? options.logToFile : undefined;
+        this.#logToServer = options?.logToServer != undefined ? options.logToFile : undefined;
     }
 
     /** @private */
@@ -737,6 +800,11 @@ class Log {
 
     saveToFile(state) {
         this.#logToFile = state != undefined ? state : true;
+        return this;
+    }
+
+    saveToServer(state) {
+        this.#logToServer = state != undefined ? state : true;
         return this;
     }
 
@@ -773,55 +841,22 @@ class Log {
                 if (err) { console.error('Error when adding new data to log:', err); }
             });
         }
+
+        // Saving to server
+
+        if (this.#logToServer != false && (serverLogsEnabled != false && condition != false) && (this.#logLevel <= this.#serverLogLevel || this.#logToServer == true)) {
+            console.log(`Saving to server: ${serverConnectionType} | Log level: ${this.#logLevel} | Log type: ${this.#logType.padEnd(7, ' ') } | Console Log Level: ${this.#consoleLogLevel} | Server Log Level: ${this.#serverLogLevel}`)
+            
+            const data = {
+                subservice: this.#serviceName == undefined ? appName : this.#serviceName,
+                timestamp: Date.now(),
+                type: this.#logType.toLowerCase(),
+            }
+
+            queue.enqueue(data)
+        }
     }
 }
-
-class ServerQueue {
-    constructor(conditionFn) {
-        this.queue = [];
-        this.isProcessing = false;
-        this.conditionFn = conditionFn;
-    }
-
-    enqueue(fn) {
-        this.queue.push(fn);
-        this.processQueue(); // Try to process the queue after adding a new function
-    }
-
-    async processQueue() {
-        if (this.isProcessing || !this.conditionFn()) {
-            // If queue is processing or the condition is not met, exit
-            return;
-        }
-
-        this.isProcessing = true;
-
-        while (this.queue.length > 0 && this.conditionFn()) {
-            const processFunction = this.queue.shift();
-            processFunction(); // Function to be executed
-        }
-
-        this.isProcessing = false;
-    }
-}
-
-const serverConditionFunction = () => condition;
-
-const queue = new ServerQueue(serverConditionFunction);
-
-queue.enqueue(() => {
-    console.log('Функция 1 выполняется')
-});
-
-queue.enqueue(() => {
-    console.log('Функция 2 выполняется');
-});
-
-setTimeout(() => {
-    condition = true;
-    console.log('Условие выполнено, очередь начала выполняться');
-    queue.processQueue(); // Попытка запуска очереди после изменения условия
-}, 3000);
 
 // Module init
 
