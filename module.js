@@ -515,12 +515,12 @@ class Log {
     #logToFile
     #serviceName = undefined;
 
-    constructor(text, formatedText) {
+    constructor(text, formatedText, options) {
         this.#text = text;
         this.#formatedText = formatedText;
         this.#consoleLogLevel = 0;
         this.#serverLogLevel = 0;
-        this.#logToFile = undefined;
+        this.#logToFile = options?.logToFile != undefined ? options.logToFile : false;
     }
 
     /** @private */
@@ -529,8 +529,30 @@ class Log {
         return this;
     }
 
+    saveToFile() {
+        this.#logToFile = true;
+        return this;
+    }
+
     process() {
+        // Logging 
         console.log(this.#formatedText)
+
+        // Saving to file
+
+        let fileServiceNameBlock = ''
+        let messageTypeBlock = ''
+
+        if (this.#serviceName != undefined) {
+            fileServiceNameBlock = `${this.#serviceName} | `
+        }
+
+        if (this.#logToFile != false && (logPath != undefined && logPath != undefined)) {
+            console.log('File Save', fileServiceNameBlock)
+            fs.appendFile(path.join(logPath, logName), `${getCurrentTimestamp()} [Success]         | ${appName} | ${fileServiceNameBlock}${this.#text} \n`, (err) => {
+                if (err) { console.error('Error when adding new data to log:', err); }
+            });
+        }
     }
 }
 
