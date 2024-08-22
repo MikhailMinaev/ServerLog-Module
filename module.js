@@ -421,7 +421,7 @@ class Logger {
     }
 
     setLogFileName(name) {
-        logName = name;
+        logName = `${name}.log`;
     }
 
     log(text) {
