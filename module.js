@@ -487,22 +487,22 @@ class ServiceLogger {
 
     success(text) {
         const formatedText = serverName('green') + terminalText(this.serviceName, 'white', 'green', false) + divider('green', '') + terminalText(text, 'white', '', false);
-        return new Log(text, formatedText);
+        return new Log(text, formatedText).setServiceName(this.serviceName);
     }
 
     message(text) {
         const formatedText = serverName('cyan') + terminalText(this.serviceName, 'white', 'cyan', false) + divider('cyan', '') + terminalText(text, 'white', '', false);
-        return new Log(text, formatedText);
+        return new Log(text, formatedText).setServiceName(this.serviceName);
     }
 
     debug(text) {
         const formatedText = serverName('blue') + terminalText(this.serviceName, 'white', 'blue', false) + divider('blue', '') + terminalText(text, 'white', '', false);
-        return new Log(text, formatedText);
+        return new Log(text, formatedText).setServiceName(this.serviceName);
     }
 
     info(text) {
         const formatedText = serverName('purple') + terminalText(this.serviceName, 'white', 'purple', false) + divider('purple', '') + terminalText(text, 'white', '', false);
-        return new Log(text, formatedText);
+        return new Log(text, formatedText).setServiceName(this.serviceName);
     }
 }
 
