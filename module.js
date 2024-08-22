@@ -946,7 +946,7 @@ class Log {
             // console.log(`Saving to server: ${serverConnectionType} | Log level: ${this.#logLevel} | Log type: ${this.#logType.padEnd(7, ' ') } | Console Log Level: ${this.#consoleLogLevel} | Server Log Level: ${this.#serverLogLevel}`)
             
             const data = {
-                subservice: this.#serviceName == undefined ? appName : this.#serviceName,
+                subservice: this.#serviceName == undefined ? undefined : this.#serviceName,
                 timestamp: Date.now(),
                 type: this.#logType.toLowerCase(),
             }
