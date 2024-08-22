@@ -599,7 +599,7 @@ class Log {
         this.#fileLogLevel = options?.fileLogLevel != undefined ? options.fileLogLevel : 0;
         this.#logLevel = options?.logLevel != undefined ? getLogLevel(options.logLevel) : 7;
         this.#logType = options?.logType != undefined ? options.logType : 'Message';
-        this.#logToFile = options?.logToFile != undefined ? options.logToFile : true;
+        this.#logToFile = options?.logToFile != undefined ? options.logToFile : undefined;
     }
 
     /** @private */
@@ -652,7 +652,7 @@ class Log {
 
         messageTypeBlock = messageTypeBlock.padEnd(17, ' ')
 
-        if (this.#logToFile != false && (logPath != undefined && logPath != undefined) && (this.#logLevel <= this.#fileLogLevel)) {
+        if (this.#logToFile != false && (logPath != undefined && logPath != undefined) && (this.#logLevel <= this.#fileLogLevel || this.#logToFile == true)) {
             console.log(`Saving to file: ${logPath}${logName} | Log level: ${this.#logLevel} | Log type: ${this.#logType.padEnd(7, ' ') } | Console Log Level: ${this.#consoleLogLevel} | Server Log Level: ${this.#serverLogLevel}`)
             fs.appendFile(path.join(logPath, logName), `${getCurrentTimestamp()} ${messageTypeBlock} | ${appName} | ${fileServiceNameBlock}${this.#text} \n`, (err) => {
                 if (err) { console.error('Error when adding new data to log:', err); }
