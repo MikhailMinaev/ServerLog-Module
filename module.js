@@ -5,6 +5,7 @@ const process = require('process');
 const os = require('os');
 const { setTimeout } = require('timers/promises');
 const util = require('util');
+const amqp = require('amqplib');
 
 // Helpers
 
@@ -452,8 +453,12 @@ let sessionToken = '';
 
 let serverConnectionType;
 
-let restapiConnectionHost = process.env.SERVERLOG_REST_HOST;
-let rabbitmqConnectionHost = process.env.SERVERLOG_RABBITMQ_HOST;
+let restapiConnectionHost = process.env.SERVERLOG_REST_HOST || undefined;
+let rabbitmqConnectionHost = process.env.SERVERLOG_RABBITMQ_HOST || undefined;
+
+let rabbitmqConnectionObject = undefined;
+let rabbitmqChannel = undefined;
+let rabbitmqExchange = process.env.SERVERLOG_RABBITMQ_EXCHANGE || undefined;
 
 class ServerQueue {
     constructor(conditionFn) {
@@ -485,7 +490,9 @@ class ServerQueue {
             }
         } else if (serverConnectionType == 'rabbitmq') {
             postToServerFunction = () => {
-                console.log({ session: sessionToken, ...data})
+                rabbitmqChannel.publish(rabbitmqExchange, '', Buffer.from(JSON.stringify({ session: sessionToken, ...data })), {
+                    persistent: true
+                });
             }
         } else {
             return
@@ -565,6 +572,14 @@ class Logger {
         restapiConnectionHost = host;
     }
 
+    setRabbitMQConnectionHost(host) {
+        rabbitmqConnectionHost = `amqp://${host}`
+    }
+
+    setRabbitMQExchange(exchange) {
+        rabbitmqExchange = exchange
+    }
+
     enableServerLogs() {
         serverLogsEnabled = true;
     }
@@ -572,6 +587,12 @@ class Logger {
     async initializeServerLogs() {
 
         const log = new ServiceLogger('Initialize Server Logs');
+
+        if (serverConnectionType == 'rabbitmq' && rabbitmqExchange == undefined) {
+            log.warning('RabbitMQ exchange is not defined!').process();
+            condition = false;
+            return
+        }
 
         if (serverLogsEnabled == false) {
             log.warning('Server logs are not enabled!').process();
@@ -638,10 +659,17 @@ class Logger {
             sessionToken = sessionData.data.id
         }
 
-        log.success(`Server logs initialized [SessionID: ${sessionToken}]`).process();
-
         restapiConnection = true;
-        condition = true
+
+        if (serverConnectionType == 'rest') {
+            condition = true
+        } else if (serverConnectionType == 'rabbitmq') {
+            rabbitmqConnectionObject = await amqp.connect(rabbitmqConnectionHost);
+            rabbitmqChannel = await rabbitmqConnectionObject.createChannel();
+            condition = true
+        }
+
+        log.success(`Server logs initialized [SessionID: ${sessionToken}]`).process();
 
         queue.processQueue();
 
