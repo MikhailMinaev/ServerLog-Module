@@ -458,6 +458,11 @@ class Logger {
         return new Log(text, formatedText);
     }
 
+    debug(text) {
+        const formatedText = serverName('') + dividerBack('blue', '') + terminalText("  Debug ", 'white', 'blue', false) + divider('blue', '') + terminalText(text, 'white', '', false);
+        return new Log(text, formatedText);
+    }
+
     success(text) {
         const formatedText = serverName('') + dividerBack('green', '') + terminalText(" Success", 'white', 'green', false) + divider('green', '') + terminalText(text, 'white', '', false);
         return new Log(text, formatedText);
