@@ -386,6 +386,8 @@ const getLogLevel = (levelName) => {
             return 5;
         case 'trace':
             return 6;
+        case 'all':
+            return 7;
     }
 }
 
@@ -403,6 +405,8 @@ const getLogTypeName = (logType) => {
             return 'Debug';
         case 6:
             return 'Trace';
+        case 7:
+            return 'All Logs';
     }
 }
 
@@ -424,13 +428,15 @@ const getLogLevelByType = (logType) => {
             return 5;
         case 'trace':
             return 6;
+        case 'all':
+            return 7;
     }
 }
 
 
 let appName, logPath, logName;
 let logToFile = false;
-let consoleLogLevel = 6;
+let consoleLogLevel = 7;
 let serverLogLevel = 4;
 
 class Logger {
@@ -461,44 +467,51 @@ class Logger {
         logName = `${name}.log`;
     }
 
+    options() {
+        return {
+            consoleLogLevel: consoleLogLevel,
+            serverLogLevel: serverLogLevel
+        }
+    }
+
     log(text) {
         const formatedText = serverName('clean') + text;
-        return new Log(text, formatedText);
+        return new Log(text, formatedText, this.options()).setLogType('All');
     }
 
     heading(text) {
         const formatedText = '\n' + serverName('blue') + terminalText(text, 'white', 'blue', false) + '\n';
-        return new Log(text, formatedText);
+        return new Log(text, formatedText, this.options()).setLogType('Info');
     }
 
     error(text) {
         const formatedText = serverName('') + dividerBack('red', '') + terminalText("  Error ", 'white', 'red', false) + divider('red', '') + terminalText(text, 'red', '', false);
-        return new Log(text, formatedText);
+        return new Log(text, formatedText, this.options()).setLogType('Error');
     }
 
     warning(text) {
         const formatedText = serverName('') + dividerBack('yellow', '') + terminalText(" Warning", 'white', 'yellow', false) + divider('yellow', '') + terminalText(text, 'yellow', '', false);
-        return new Log(text, formatedText);
+        return new Log(text, formatedText, this.options()).setLogType('Warning');
     }
 
     success(text) {
         const formatedText = serverName('') + dividerBack('green', '') + terminalText(" Success", 'white', 'green', false) + divider('green', '') + terminalText(text, 'white', '', false);
-        return new Log(text, formatedText);
+        return new Log(text, formatedText, this.options()).setLogType('Success');
     }
 
     message(text) {
         const formatedText = serverName('') + dividerBack('cyan', '') + terminalText(" Message", 'white', 'cyan', false) + divider('cyan', '') + terminalText(text, 'white', '', false);
-        return new Log(text, formatedText);
+        return new Log(text, formatedText, this.options()).setLogType('Message');
     }
 
     debug(text) {
         const formatedText = serverName('') + dividerBack('blue', '') + terminalText("  Debug ", 'white', 'blue', false) + divider('blue', '') + terminalText(text, 'white', '', false);
-        return new Log(text, formatedText);
+        return new Log(text, formatedText, this.options()).setLogType('Debug');
     }
 
     info(text) {
         const formatedText = serverName('') + dividerBack('purple', '') + terminalText("  Info  ", 'white', 'purple', false) + divider('purple', '') + terminalText(text, 'white', '', false);
-        return new Log(text, formatedText);
+        return new Log(text, formatedText, this.options()).setLogType('Info');
     }
 }
 
@@ -522,7 +535,7 @@ class ServiceLogger {
 
     log(text) {
         const formatedText = serverName('') + terminalText(this.serviceName, 'white', '', false) + divider('white', '') + terminalText(text, 'white', '', false);
-        return new Log(text, formatedText, this.options()).setServiceName(this.serviceName).setLogLevel('all');
+        return new Log(text, formatedText, this.options()).setServiceName(this.serviceName).setLogLevel('All');
     }
 
     error(text) {
@@ -602,6 +615,8 @@ class Log {
 
     process() {
 
+        // console.log(`Check | Log level: ${this.#logLevel} | Log type: ${this.#logType.padEnd(7, ' ')} | Console Log Level: ${this.#consoleLogLevel} | Server Log Level: ${this.#serverLogLevel}`)
+
         // Console Logging 
 
         if (this.#logLevel <= this.#consoleLogLevel) {
@@ -626,7 +641,7 @@ class Log {
         messageTypeBlock = messageTypeBlock.padEnd(17, ' ')
 
         if (this.#logToFile != false && (logPath != undefined && logPath != undefined) && (this.#logLevel <= this.#consoleLogLevel)) {
-            console.log(`Saving to file: ${logPath}${logName} | Log level: ${this.#logLevel} | Log type: ${this.#logType} | Console Log Level: ${this.#consoleLogLevel} | Server Log Level: ${this.#serverLogLevel}`)
+            // console.log(`Saving to file: ${logPath}${logName} | Log level: ${this.#logLevel} | Log type: ${this.#logType.padEnd(7, ' ') } | Console Log Level: ${this.#consoleLogLevel} | Server Log Level: ${this.#serverLogLevel}`)
             fs.appendFile(path.join(logPath, logName), `${getCurrentTimestamp()} ${messageTypeBlock} | ${appName} | ${fileServiceNameBlock}${this.#text} \n`, (err) => {
                 if (err) { console.error('Error when adding new data to log:', err); }
             });
