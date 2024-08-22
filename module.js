@@ -493,7 +493,7 @@ class ServiceLogger {
     }
 
     message(text) {
-        const formatedText = serverName('') + dividerBack('cyan', '') + terminalText(" Message", 'white', 'cyan', false) + divider('cyan', '') + terminalText(text, 'white', '', false);
+        const formatedText = serverName('cyan') + terminalText(this.serviceName, 'white', 'cyan', false) + divider('cyan', '') + terminalText(text, 'white', '', false);
         return new Log(text, formatedText);
     }
 }
