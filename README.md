@@ -1,4 +1,4 @@
-# Logger Module
+# Serverlog Module
 
 A customizable logging module for Node.js applications.
 
@@ -10,7 +10,7 @@ This module provides a flexible logging system that allows you to log messages t
 
 To use this module, simply require it in your Node.js application:
 ```javascript
-const Logger = require('./logger');
+const Logger = require('./serverlog');
 ```
 ## Usage
 
