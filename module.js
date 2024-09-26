@@ -9,7 +9,7 @@ const amqp = require('amqplib');
 
 // Helpers
 
-systemInformationServices = {
+const systemInformationServices = {
     time:               '   Time   ',
     system:             '  System  ',
     bios:               '   Bios   ',
@@ -432,7 +432,7 @@ const serverConditionFunction = () => condition;
 
 const queue = new ServerQueue(serverConditionFunction);
 
-class Logger {
+export class Logger {
     
     constructor() {}
 
@@ -977,7 +977,7 @@ class Logger {
     }
 }
 
-class ServiceLogger {
+export class ServiceLogger {
 
     #serviceConsoleLogLevel;
     #serviceServerLogLevel;
@@ -1261,13 +1261,4 @@ class Log {
             queue.enqueue(data)
         }
     }
-}
-
-// Module init
-
-module.exports = {
-
-    Logger,
-    ServiceLogger,
-
 }
