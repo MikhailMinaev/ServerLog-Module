@@ -3,17 +3,16 @@ import fs from 'fs';
 import path from 'path';
 import process from 'process';
 import os from 'os';
-import { setTimeout } from 'timers/promises';
 import util from 'util';
 import amqp from 'amqplib';
 
 // Types
 
-export type Arguments = string | Error | object | Array<any>;
+type Arguments = string | Error | object | Array<any>;
 
-export type Color = '' | 'black' | 'red' | 'green' | 'yellow' | 'blue' | 'purple' | 'cyan' | 'white' | 'clean';
+type Color = '' | 'black' | 'red' | 'green' | 'yellow' | 'blue' | 'purple' | 'cyan' | 'white' | 'clean';
 
-export type Data = {
+type Data = {
 	subservice: string | undefined;
 	timestamp: number;
 	type: string;
@@ -22,9 +21,9 @@ export type Data = {
 	message?: string;
 };
 
-export type QueueObject = () => void;
+type QueueObject = () => void;
 
-export type ConditionFunction = () => boolean | undefined;
+type ConditionFunction = () => boolean | undefined;
 
 // Helpers
 
