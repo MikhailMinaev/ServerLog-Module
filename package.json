@@ -1,15 +1,29 @@
 {
   "name": "@mikhailminaev/serverlog",
-  "version": "2.0.1",
+  "version": "2.0.2",
   "description": "Company Server Log module",
-  "main": "module.js",
+  "main": "build/index.js",
+  "module": "build/index.mjs",
+  "types": "build/index.d.ts",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 0"
+    "build": "tsup",
+    "format": "prettier --write \"source/**/*.{ts,tsx}\"",
+    "publish:major": "npm version major; npm run build; npm publish",
+    "publish:minor": "npm version minor; npm run build; npm publish",
+    "publish:patch": "npm version patch; npm run build; npm publish"
   },
   "author": "Mikhail Minaev",
-  "license": "ISC",
+  "license": "MIT",
   "dependencies": {
     "amqplib": "^0.10.4",
     "systeminformation": "^5.22.7"
+  },
+  "devDependencies": {
+    "@total-typescript/ts-reset": "^0.6.1",
+    "@types/amqplib": "^0.10.5",
+    "@types/node": "^22.7.3",
+    "prettier": "^3.3.3",
+    "tsup": "^8.3.0",
+    "typescript": "^5.6.2"
   }
 }
