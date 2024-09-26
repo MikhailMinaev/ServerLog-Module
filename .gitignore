@@ -42,3 +42,4 @@ package-lock.json
 *.njsproj
 *.sln
 *.sw?
+*.code-workspace
